@@ -16,22 +16,24 @@ public class Overview extends AppCompatActivity {
 	private MoviePosterFragment mPopularMovies;
 	private MoviePosterFragment mTopRatedMovies;
 	private MoviePosterFragment mUpcomingMovies;
-	private MoviePosterFragment mRecentFragment;
 	private AppBarLayout mAppBarLayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_overview);
-		setupToolbar("Movies");
+		setupToolbar(R.string.app_name);
 		setupFragments();
 	}
 	
-	private void setupToolbar(String title) {
+	private void setupToolbar(int textID) {
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		mAppBarLayout = findViewById(R.id.app_bar_layout);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		if(getSupportActionBar()!=null) {
+			getSupportActionBar().setTitle(textID);
+			getSupportActionBar().setDisplayShowTitleEnabled(false);
+		}
 	}
 	
 	private void setupFragments(){
@@ -89,16 +91,14 @@ public class Overview extends AppCompatActivity {
 		FragmentTransaction objFragmentTransaction = mFragmentManager.beginTransaction();
 		objFragmentTransaction.add(R.id.fragment_container, mTopRatedMovies);
 		objFragmentTransaction.commit();
-		mRecentFragment = mTopRatedMovies;
 	}
 	
 	private void pushFragment(MoviePosterFragment newFragment) {
 		
 		FragmentTransaction objFragmentTransaction = mFragmentManager.beginTransaction();
-		objFragmentTransaction.add(R.id.fragment_container, newFragment);
-		objFragmentTransaction.remove(mRecentFragment);
+		objFragmentTransaction.replace(R.id.fragment_container, newFragment);
+		objFragmentTransaction.addToBackStack(null);
 		objFragmentTransaction.commit();
-		mRecentFragment = newFragment;
 		
 	}
 }

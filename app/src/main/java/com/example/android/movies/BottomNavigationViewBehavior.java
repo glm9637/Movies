@@ -25,17 +25,16 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
 	
 	@Override
 	public boolean layoutDependsOn(CoordinatorLayout parent, BottomNavigationView child, View dependency) {
-		boolean dependsOn = dependency instanceof FrameLayout;
-		return dependsOn;
+		return dependency instanceof FrameLayout;
 	}
 	
 	@Override
-	public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, BottomNavigationView child, View directTargetChild, View target, int nestedScrollAxes) {
-		return nestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL;
+	public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull BottomNavigationView child, @NonNull View directTargetChild, @NonNull View target, int axes, int type) {
+		return axes == ViewCompat.SCROLL_AXIS_VERTICAL;
 	}
 	
 	@Override
-	public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, BottomNavigationView child, View target, int dx, int dy, int[] consumed) {
+	public void onNestedPreScroll(@NonNull CoordinatorLayout coordinatorLayout, @NonNull BottomNavigationView child, @NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
 		if(dy < 0) {
 			showBottomNavigationView(child);
 		}
@@ -43,6 +42,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
 			hideBottomNavigationView(child);
 		}
 	}
+	
 	
 	private void hideBottomNavigationView(BottomNavigationView view) {
 		view.animate().translationY(view.getHeight());

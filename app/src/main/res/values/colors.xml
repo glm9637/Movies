@@ -5,8 +5,11 @@
     <color name="colorAccent">#D50000</color>
 
     <color name="white">#FFFFFF</color>
-
     <color name="black">#000000</color>
+
+    <color name="primary_text">#FFFFFFFF</color>
+    <color name="secondary_text">#B3FFFFFF</color>
+    <color name="disabled_text">#7FFFFFFF</color>
 
     <color name="scrimBaseColor">#66000000</color>
 </resources>

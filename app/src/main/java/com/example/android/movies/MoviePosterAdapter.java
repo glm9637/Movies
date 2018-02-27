@@ -1,6 +1,7 @@
 package com.example.android.movies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -36,8 +37,15 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 	
 	class MovieViewHolder extends ViewHolder {
 		
-		public MovieViewHolder(View itemView) {
+		MovieViewHolder(final View itemView) {
 			super(itemView);
+			itemView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(itemView.getContext(),DetailActivity.class);
+					itemView.getContext().startActivity(intent);
+				}
+			});
 		}
 	}
 }
