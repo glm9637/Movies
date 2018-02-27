@@ -9,4 +9,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="OverviewTheme" parent="AppTheme">
+
+    </style>
+
+    <style name="DetailTheme" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+    </style>
 </resources>

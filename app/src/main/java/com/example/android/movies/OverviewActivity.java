@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class Overview extends AppCompatActivity {
+public class OverviewActivity extends AppCompatActivity {
 
 	private FragmentManager mFragmentManager;
 	private MoviePosterFragment mPopularMovies;

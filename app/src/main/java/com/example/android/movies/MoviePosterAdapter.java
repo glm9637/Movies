@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 /**
  * Erzeugt von M. Fengels am 26.02.2018.
@@ -14,10 +15,17 @@ import android.view.ViewGroup;
 
 public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.MovieViewHolder> {
 	
-	LayoutInflater mInflater;
+	private LayoutInflater mInflater;
+	private MovieSelectedListener mMovieSelectedListener;
 	
-	public MoviePosterAdapter(Context context){
+	
+	public interface MovieSelectedListener {
+		void onMovieSelected(ImageView posterView);
+	}
+	
+	public MoviePosterAdapter(Context context, MovieSelectedListener movieSelectedListener){
 		mInflater = 	LayoutInflater.from(context);
+		mMovieSelectedListener = movieSelectedListener;
 	}
 	
 	@Override
@@ -37,13 +45,15 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 	
 	class MovieViewHolder extends ViewHolder {
 		
+		ImageView mPosterView;
+		
 		MovieViewHolder(final View itemView) {
 			super(itemView);
+			mPosterView = itemView.findViewById(R.id.poster_view);
 			itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(itemView.getContext(),DetailActivity.class);
-					itemView.getContext().startActivity(intent);
+					mMovieSelectedListener.onMovieSelected(mPosterView);
 				}
 			});
 		}

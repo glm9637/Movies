@@ -151,5 +151,6 @@
         app:startHeight="2dp"
         app:startToolbarPosition="2dp"
         app:startXPosition="2dp"
+        android:transitionName="@string/picture_transition_name"
         />
 </android.support.design.widget.CoordinatorLayout>

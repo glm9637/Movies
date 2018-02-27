@@ -4,9 +4,21 @@
         <item name="android:windowBackground">@color/black</item>
         <item name="android:navigationBarColor">@color/black</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentTransitions">true</item>
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="OverviewTheme" parent="AppTheme">
+        <item name="android:windowExitTransition">@transition/overview_exit</item>
+        <item name="android:windowReenterTransition">@transition/overview_reenter</item>
+    </style>
+
+    <style name="DetailTheme" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowEnterTransition">@transition/detail_enter</item>
     </style>
 </resources>

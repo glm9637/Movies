@@ -3,4 +3,7 @@
 
     <string name="the_movie_db_url"> http://image.tmdb.org/t/p/.</string>
     <string name="the_movie_db">Nope</string>
+
+
+    <string name="picture_transition_name">Thumbnail to Activity</string>
 </resources>
