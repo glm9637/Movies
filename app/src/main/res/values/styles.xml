@@ -17,4 +17,39 @@
 
     </style>
 
+    <style name="MovieOverviewDialog" parent="android:Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:padding">-25dp</item>
+    </style>
+
+    <style name="SubHeaderTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">8dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DefaultTextCard">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="GenreTextView">
+        <item name="android:textSize">@dimen/chip_text_size</item>
+        <item name="android:textColor">@color/chipTextColor</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/chip_height</item>
+        <item name="android:paddingLeft">@dimen/chip_paddin_side</item>
+        <item name="android:paddingRight">@dimen/chip_paddin_side</item>
+        <item name="android:background">@drawable/genre_background</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginLeft">8dp</item>
+    </style>
+
 </resources>

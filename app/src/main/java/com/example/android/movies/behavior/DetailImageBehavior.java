@@ -1,4 +1,4 @@
-package com.example.android.movies;
+package com.example.android.movies.behavior;
 
 /**
  * Erzeugt von M. Fengels am 27.02.2018.
@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+
+import com.example.android.movies.R;
 
 @SuppressWarnings("unused")
 public class DetailImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
@@ -70,7 +72,14 @@ public class DetailImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
 	public boolean layoutDependsOn(CoordinatorLayout parent, ImageView child, View dependency) {
 		return dependency instanceof Toolbar;
 	}
-	
+
+	/**
+	 * Set's the Imageviews position, when the Toolbar changes its position
+	 * @param parent
+	 * @param child
+	 * @param dependency
+	 * @return
+	 */
 	@Override
 	public boolean onDependentViewChanged(CoordinatorLayout parent, ImageView child, View dependency) {
 		maybeInitProperties(child, dependency);
@@ -109,7 +118,10 @@ public class DetailImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * Initialises the Properties, if it was not done before
+	 */
 	private void maybeInitProperties(ImageView child, View dependency) {
 		if (mStartYPosition == 0)
 			mStartYPosition = (int) (dependency.getY());
@@ -133,7 +145,10 @@ public class DetailImageBehavior extends CoordinatorLayout.Behavior<ImageView> {
 			mChangeBehaviorPoint = (child.getHeight() - mCustomFinalHeight) / (2f * (mStartYPosition - mFinalYPosition));
 		}
 	}
-	
+
+	/**
+	 * @return The height of the status bar
+	 */
 	public int getStatusBarHeight() {
 		int result = 0;
 		int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");

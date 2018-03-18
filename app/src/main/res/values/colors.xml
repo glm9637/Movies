@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#D50000</color>
 
+    <color name="overviewToolbarColor">#66000000</color>
+
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
@@ -12,4 +14,7 @@
     <color name="disabled_text">#7FFFFFFF</color>
 
     <color name="scrimBaseColor">#66000000</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="genreTextBackground">#E0E0E0</color>
+    <color name="chipTextColor">#DE000000</color>
 </resources>

@@ -5,19 +5,19 @@
         android:id="@+id/action_top_rated"
         android:enabled="true"
         android:icon="@drawable/ic_favorite_border_white_24dp"
-        android:title="Top rated"
+        android:title="@string/top_rated"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_popular"
         android:enabled="true"
         android:icon="@drawable/ic_group_white_24dp"
-        android:title="Popular"
+        android:title="@string/popular"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_upcoming"
         android:enabled="true"
         android:icon="@drawable/ic_access_time_white_24dp"
-        android:title="Upcoming"
+        android:title="@string/upcoming"
         app:showAsAction="ifRoom" />
 </menu>
