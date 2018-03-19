@@ -1,5 +1,6 @@
 package com.example.android.movies.fragments.overview;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,18 +37,18 @@ import java.util.ArrayList;
  * Base Class for displaying a grid of Movies
  */
 public abstract class MoviePosterFragment extends Fragment implements LoaderManager.LoaderCallbacks<ArrayList<ListMovie>> {
-
-
-    /**
+	
+	/**
      * interface for communication with the Activity, and displaying the first Movie on Top
      */
     public interface LoadTopImage {
         void onLoadTopImage(ListMovie topMovie, View.OnClickListener onMovieClicked);
+        void onError(int ErrorType);
     }
 
     private RecyclerView mPosterGrid;
     private MoviePosterAdapter mPosterAdapter;
-    private Context mContext;
+    private FragmentActivity mContext;
     private LoadTopImage mLoadTopImage;
 
     /**
@@ -72,20 +75,18 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
-        mContext = getContext();
+        mContext = getActivity();
         mPosterGrid = rootView.findViewById(R.id.recycler_overview);
         GridLayoutManager gridManager = new GridLayoutManager(getContext(), 2);
         mPosterGrid.setLayoutManager(gridManager);
         mPosterAdapter = new MoviePosterAdapter(getContext(), new MoviePosterAdapter.MovieSelectedListener() {
             @Override
-            public void onMovieSelected(ImageView posterView, Bundle info, Bundle detailInfo) {
-                ActivityOptions options = null;
+            public void onMovieSelected(ImageView posterView, Bundle info) {
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 intent.putExtra(Constants.INTENT_BUNDLE,info);
-                intent.putExtra(Constants.INTENT_BUNDLE_DETAIL,detailInfo);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), posterView, getContext().getString(R.string.picture_transition_name));
-                    getContext().startActivity(intent, null);
+	                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), posterView, getContext().getString(R.string.picture_transition_name));
+                    getContext().startActivity(intent, options.toBundle());
                 }else {
                     getContext().startActivity(intent);
                 }
@@ -114,30 +115,25 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
     @Override
     public void onLoadFinished(@NonNull Loader<ArrayList<ListMovie>> loader, final ArrayList<ListMovie> data) {
         if (mLoadTopImage != null) {
+        	if(data==null){
+        		mLoadTopImage.onError(Constants.ERROR_NO_CONNECTION);
+        		return;
+	        }else if(data.size()==0){
+        		mLoadTopImage.onError(Constants.ERROR_SOMETHING_WENT_WRONG);
+        		return;
+	        }
             mLoadTopImage.onLoadTopImage(data.get(0), new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ActivityOptions options = null;
-
                     Bundle itemInfo = new Bundle();
-                    ListMovie currentSelection =data.get(0);
-                    itemInfo.putInt(Constants.MOVIE_ID,currentSelection.getId());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_TITLE,currentSelection.getTitle());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_POSTER_PATH,currentSelection.getPosterPath());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_BACKDROP_PATH,currentSelection.getBackdropPath());
-                    Bundle detailInfo = new Bundle();
-                    detailInfo.putInt(Constants.MOVIE_ID,currentSelection.getId());
-                    detailInfo.putString(Constants.INTENT_BUNDLE_OVERVIEW,currentSelection.getOverview());
-                    detailInfo.putInt(Constants.INTENT_BUNDLE_VOTE_COUNT,currentSelection.getVoteCount());
-                    detailInfo.putDouble(Constants.INTENT_BUNDLE_VOTE_AVERAGE,currentSelection.getVoteAverage());
-                    detailInfo.putString(Constants.INTENT_BUNDLE_RELEASE_DATE, Utils.parseToString(currentSelection.getReleaseDate()));
+                    itemInfo.putParcelable(Constants.INTENT_BUNDLE_MOVIE,data.get(0));
+	                itemInfo.putInt(Constants.MOVIE_ID,data.get(0).getId());
                     Intent intent = new Intent(getContext(), DetailActivity.class);
 
                     intent.putExtra(Constants.INTENT_BUNDLE,itemInfo);
-                    intent.putExtra(Constants.INTENT_BUNDLE_DETAIL,detailInfo);
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                        options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), v, getContext().getString(R.string.picture_transition_name));
-                        getContext().startActivity(intent, null);
+	                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), v, getContext().getString(R.string.picture_transition_name));
+                        getContext().startActivity(intent, options.toBundle());
                     }else {
                         getContext().startActivity(intent);
                     }
@@ -152,5 +148,9 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
     public void onLoaderReset(@NonNull Loader loader) {
         loader.reset();
     }
+	
+	public void refreshData() {
+		mContext.getSupportLoaderManager().restartLoader(getLoaderID(), null, this);
+	}
 
 }

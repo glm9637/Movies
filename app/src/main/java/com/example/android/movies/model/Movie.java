@@ -121,7 +121,7 @@ public class Movie {
         return mBelongsToCollection;
     }
 
-    public int getBudget() {
+    public Integer getBudget() {
         return mBudget;
     }
 
@@ -133,7 +133,7 @@ public class Movie {
         return mHomepage;
     }
 
-    public int getId() {
+    public Integer getId() {
         return mId;
     }
 
@@ -173,11 +173,11 @@ public class Movie {
         return mReleaseDate;
     }
 
-    public int getRevenue() {
+    public Integer getRevenue() {
         return mRevenue;
     }
 
-    public int getRuntime() {
+    public Integer getRuntime() {
         return mRuntime;
     }
 

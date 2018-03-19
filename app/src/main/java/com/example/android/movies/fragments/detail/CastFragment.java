@@ -57,7 +57,6 @@ public class CastFragment extends Fragment implements LoaderManager.LoaderCallba
     @NonNull
     @Override
     public Loader<ArrayList<Cast>> onCreateLoader(int id, @Nullable Bundle args) {
-
         return new CastListLoader(mContext,getArguments().getInt(Constants.MOVIE_ID));
 
 

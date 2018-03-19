@@ -1,5 +1,8 @@
 package com.example.android.movies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.example.android.movies.utils.Utils;
 
 import org.json.JSONArray;
@@ -17,7 +20,7 @@ import java.util.List;
 /**
  * Model for saving a Movie, which gets returned by the api in a list
  */
-public class ListMovie {
+public class ListMovie implements Parcelable {
 
     private String mPosterPath;
     private boolean mIsAdult;
@@ -69,8 +72,53 @@ public class ListMovie {
         }
 
     }
-
-    public String getPosterPath() {
+	
+	protected ListMovie(Parcel in) {
+		mPosterPath = in.readString();
+		mIsAdult = in.readByte() != 0;
+		mOverview = in.readString();
+		if (in.readByte() == 0) {
+			mId = null;
+		} else {
+			mId = in.readInt();
+		}
+		mOriginalLanguage = in.readString();
+		mOriginalTitle = in.readString();
+		mTitle = in.readString();
+		mBackdropPath = in.readString();
+		if (in.readByte() == 0) {
+			mPopularity = null;
+		} else {
+			mPopularity = in.readDouble();
+		}
+		if (in.readByte() == 0) {
+			mVoteCount = null;
+		} else {
+			mVoteCount = in.readInt();
+		}
+		mVideo = in.readByte() != 0;
+		if (in.readByte() == 0) {
+			mVoteAverage = null;
+		} else {
+			mVoteAverage = in.readDouble();
+		}
+		
+		mReleaseDate =  new Date(in.readLong());
+	}
+	
+	public static final Creator<ListMovie> CREATOR = new Creator<ListMovie>() {
+		@Override
+		public ListMovie createFromParcel(Parcel in) {
+			return new ListMovie(in);
+		}
+		
+		@Override
+		public ListMovie[] newArray(int size) {
+			return new ListMovie[size];
+		}
+	};
+	
+	public String getPosterPath() {
         return mPosterPath;
     }
 
@@ -125,4 +173,49 @@ public class ListMovie {
     public Double getVoteAverage() {
         return mVoteAverage;
     }
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(mPosterPath);
+		dest.writeByte((byte) (mIsAdult ? 1 : 0));
+		dest.writeString(mOverview);
+		if (mId == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(mId);
+		}
+		dest.writeString(mOriginalLanguage);
+		dest.writeString(mOriginalTitle);
+		dest.writeString(mTitle);
+		dest.writeString(mBackdropPath);
+		if (mPopularity == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeDouble(mPopularity);
+		}
+		if (mVoteCount == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeInt(mVoteCount);
+		}
+		dest.writeByte((byte) (mVideo ? 1 : 0));
+		if (mVoteAverage == null) {
+			dest.writeByte((byte) 0);
+		} else {
+			dest.writeByte((byte) 1);
+			dest.writeDouble(mVoteAverage);
+		}
+		
+			dest.writeLong(mReleaseDate.getTime());
+		
+	}
 }

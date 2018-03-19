@@ -33,7 +33,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
 
     @Override
     public boolean onStartNestedScroll(@NonNull CoordinatorLayout coordinatorLayout,
-                                       BottomNavigationView child, @NonNull
+                                       @NonNull BottomNavigationView child, @NonNull
                                                View directTargetChild, @NonNull View target,
                                        int axes, int type)
     {

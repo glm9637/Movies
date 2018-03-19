@@ -26,5 +26,10 @@
     <string name="minute_short">min</string>
     <string name="unknown">N/A</string>
     <string name="votes">votes</string>
+    <string name="error_loading_movie">A Error occurred while loading the Movie. Please try again later</string>
+    <string name="error_unknown">Something went Wrong!</string>
+    <string name="error_unknown_description">Please try it again later.</string>
+    <string name="error_no_connection">No Internet Connection!</string>
+    <string name="error_no_connection_description">You are not connected to the Internet. Please restore the connection and try it again</string>
 
 </resources>

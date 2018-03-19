@@ -10,7 +10,7 @@ public class PopularMoviesFragment extends MoviePosterFragment {
 
     @Override
     protected String getUrlEndpoint() {
-        return "/movie/top_rated";
+        return "/movie/popular";
     }
 
     @Override

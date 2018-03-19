@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.android.movies.fragments.detail.CastFragment;
 import com.example.android.movies.fragments.detail.InfoFragment;
 import com.example.android.movies.fragments.detail.MediaFragment;
+import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.example.android.movies.utils.Constants;
 import com.squareup.picasso.Picasso;
@@ -48,15 +49,15 @@ public class DetailActivity extends BottomNavigationActivity
     @Override
     protected void setupFragments() {
         InfoFragment infoFragment = new InfoFragment();
-        infoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE_DETAIL));
+        infoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_description, infoFragment);
 
         CastFragment castFragment = new CastFragment();
-        castFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE_DETAIL));
+        castFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_actors,castFragment);
 
         MediaFragment mediaFragment = new MediaFragment();
-        mediaFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE_DETAIL));
+        mediaFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_media,mediaFragment);
 
         setStartFragment(R.id.action_description);
@@ -80,8 +81,6 @@ public class DetailActivity extends BottomNavigationActivity
 
     /**
      * Handles the Alpha and Visibility changes when the offset changes
-     * @param appBarLayout
-     * @param offset
      */
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
@@ -151,10 +150,13 @@ public class DetailActivity extends BottomNavigationActivity
      */
     private void initUI() {
         Bundle extras = getIntent().getBundleExtra(Constants.INTENT_BUNDLE);
-        mTitle.setText(extras.getString(Constants.INTENT_BUNDLE_TITLE));
-        mTitleTextExpanded.setText(extras.getString(Constants.INTENT_BUNDLE_TITLE));
-        Picasso.with(this).load(NetworkHelper.getImageUrl(extras.getString(Constants.INTENT_BUNDLE_POSTER_PATH), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
-        Picasso.with(this).load(NetworkHelper.getImageUrl(extras.getString(Constants.INTENT_BUNDLE_BACKDROP_PATH), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+	    ListMovie listMovie = extras.getParcelable(Constants.INTENT_BUNDLE_MOVIE);
+	    if(listMovie!=null) {
+		    mTitle.setText(listMovie.getTitle());
+		    mTitleTextExpanded.setText(listMovie.getTitle());
+		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
+		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getBackdropPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+	    }
     }
 
 }

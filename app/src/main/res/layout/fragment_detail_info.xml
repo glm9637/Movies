@@ -24,8 +24,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:text="@string/user_rating"
-            android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textColor="@color/primary_text"
+            android:textSize="@dimen/text_size_title"
             app:layout_constraintBottom_toBottomOf="@id/user_rating_bar"
             app:layout_constraintLeft_toRightOf="@id/user_rating_bar"
             app:layout_constraintTop_toTopOf="@id/user_rating_bar" />
@@ -37,7 +37,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:textColor="@color/secondary_text"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_size_small"
             app:layout_constraintLeft_toRightOf="@id/user_rating_bar"
             app:layout_constraintTop_toBottomOf="@id/user_rating_text"
             tools:text="125.000 Votes" />
@@ -62,14 +62,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
+                    android:textSize="@dimen/text_size_sub_title"
                     android:text="@string/description" />
 
                 <TextView
                     android:id="@+id/txt_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="8dp"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/text_size_default"
                     tools:text="Test beschreibung die viel zu kurz ist, aber was solls?" />
 
             </LinearLayout>
@@ -92,6 +92,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_sub_title"
                     android:text="@string/facts" />
 
                 <TextView

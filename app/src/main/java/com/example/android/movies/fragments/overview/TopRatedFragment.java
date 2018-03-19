@@ -9,7 +9,7 @@ import com.example.android.movies.utils.Constants;
 public class TopRatedFragment extends MoviePosterFragment {
     @Override
     protected String getUrlEndpoint() {
-        return "/movie/popular";
+        return "/movie/top_rated";
     }
 
     @Override

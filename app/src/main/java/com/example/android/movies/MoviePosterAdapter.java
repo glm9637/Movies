@@ -32,7 +32,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     private ArrayList<ListMovie> mData;
 
     public interface MovieSelectedListener {
-        void onMovieSelected(ImageView posterView, Bundle info, Bundle detailInfo);
+        void onMovieSelected(ImageView posterView, Bundle info);
     }
 
     public MoviePosterAdapter(Context context, MovieSelectedListener movieSelectedListener) {
@@ -104,18 +104,9 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
                 @Override
                 public void onClick(View v) {
                     Bundle itemInfo = new Bundle();
-                    ListMovie currentSelection = mData.get(getAdapterPosition()+1);
-                    itemInfo.putInt(Constants.MOVIE_ID,currentSelection.getId());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_TITLE,currentSelection.getTitle());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_POSTER_PATH,currentSelection.getPosterPath());
-                    itemInfo.putString(Constants.INTENT_BUNDLE_BACKDROP_PATH,currentSelection.getBackdropPath());
-                    Bundle detailInfo = new Bundle();
-                    detailInfo.putInt(Constants.MOVIE_ID,currentSelection.getId());
-                    detailInfo.putString(Constants.INTENT_BUNDLE_OVERVIEW,currentSelection.getOverview());
-                    detailInfo.putInt(Constants.INTENT_BUNDLE_VOTE_COUNT,currentSelection.getVoteCount());
-                    detailInfo.putDouble(Constants.INTENT_BUNDLE_VOTE_AVERAGE,currentSelection.getVoteAverage());
-                    detailInfo.putString(Constants.INTENT_BUNDLE_RELEASE_DATE, Utils.parseToString(currentSelection.getReleaseDate()));
-                    mMovieSelectedListener.onMovieSelected(mPosterView,itemInfo, detailInfo);
+                    itemInfo.putParcelable(Constants.INTENT_BUNDLE_MOVIE,mData.get(getAdapterPosition()+1));
+                    itemInfo.putInt(Constants.MOVIE_ID,mData.get(getAdapterPosition()+1).getId());
+                    mMovieSelectedListener.onMovieSelected(mPosterView,itemInfo);
                 }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {

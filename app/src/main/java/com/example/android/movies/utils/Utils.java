@@ -33,6 +33,9 @@ public class Utils {
      * @return the parsed String
      */
     public static String parseToString(Date date){
+    	if(date == null){
+    		return "";
+	    }
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy",Locale.US);
         return dateFormat.format(date);
     }
