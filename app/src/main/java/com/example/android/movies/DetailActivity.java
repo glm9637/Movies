@@ -2,7 +2,11 @@ package com.example.android.movies;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
@@ -22,13 +26,16 @@ public class DetailActivity extends BottomNavigationActivity
 
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
+    private static final float PERCENTAGE_TO_HIDE_FAVORITE_BUTTON = 0.8f;
     private static final int ALPHA_ANIMATIONS_DURATION = 200;
 
     private boolean mIsTheTitleVisible = false;
     private boolean mIsTheTitleContainerVisible = true;
+    private boolean mIsFavorizeButtonVisible = true;
 
     private LinearLayout mTitleContainer;
     private TextView mTitle;
+    private FloatingActionButton mFavorize;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
     private ImageView mPosterImageView;
@@ -42,7 +49,6 @@ public class DetailActivity extends BottomNavigationActivity
         bindActivity();
         initUI();
         mAppBarLayout.addOnOffsetChangedListener(this);
-        mToolbar.inflateMenu(R.menu.menu_detail);
         startAlphaAnimation(mTitle, 0, View.INVISIBLE);
     }
 
@@ -68,8 +74,25 @@ public class DetailActivity extends BottomNavigationActivity
     protected int getContentViewID() {
         return R.layout.activity_detail;
     }
-
-    private void bindActivity() {
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+    	getMenuInflater().inflate(R.menu.menu_detail,menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		
+		if(!mIsFavorizeButtonVisible) {
+			menu.add(0,0,0,"Favorize")
+					.setIcon(R.drawable.ic_favorite_border_white_24dp)
+					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	private void bindActivity() {
         mToolbar = findViewById(R.id.main_toolbar);
         mTitle = findViewById(R.id.main_textview_title);
         mTitleContainer = findViewById(R.id.main_linearlayout_title);
@@ -77,6 +100,7 @@ public class DetailActivity extends BottomNavigationActivity
         mPosterImageView = findViewById(R.id.poster_view);
         mBackDropImageView = findViewById(R.id.backdrop_view);
         mTitleTextExpanded = findViewById(R.id.title_text_expanded);
+        mFavorize = findViewById(R.id.btn_favorize);
     }
 
     /**
@@ -89,6 +113,7 @@ public class DetailActivity extends BottomNavigationActivity
 
         handleAlphaOnTitle(percentage);
         handleToolbarTitleVisibility(percentage);
+        handleFavoriteFabVisibility(percentage);
     }
 
     /**
@@ -97,18 +122,19 @@ public class DetailActivity extends BottomNavigationActivity
      */
     private void handleToolbarTitleVisibility(float percentage) {
         if (percentage >= PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR) {
-
-            if (!mIsTheTitleVisible) {
-                startAlphaAnimation(mTitle, ALPHA_ANIMATIONS_DURATION, View.VISIBLE);
-                mIsTheTitleVisible = true;
-            }
-
+	
+	        if (!mIsTheTitleVisible) {
+		        startAlphaAnimation(mTitle, ALPHA_ANIMATIONS_DURATION, View.VISIBLE);
+		        mIsTheTitleVisible = true;
+	        }
+	
         } else {
-
-            if (mIsTheTitleVisible) {
-                startAlphaAnimation(mTitle, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE);
-                mIsTheTitleVisible = false;
-            }
+	
+	        if (mIsTheTitleVisible) {
+		        startAlphaAnimation(mTitle, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE);
+		        mIsTheTitleVisible = false;
+	        }
+         
         }
     }
 
@@ -131,6 +157,28 @@ public class DetailActivity extends BottomNavigationActivity
             }
         }
     }
+	
+	/**
+	 * Hides the FavorizeFab when the Toolbar is collapsed further than the value defined in PERCENTAGE_TO_HIDE_TITLE_DETAILS
+	 * @param percentage the current percentage
+	 */
+	private void handleFavoriteFabVisibility(float percentage) {
+		if (percentage >= PERCENTAGE_TO_HIDE_FAVORITE_BUTTON) {
+			if (mIsFavorizeButtonVisible) {
+				startAlphaAnimation(mFavorize, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE);
+				mIsFavorizeButtonVisible = false;
+				invalidateOptionsMenu();
+			}
+			
+		} else {
+			
+			if (!mIsFavorizeButtonVisible) {
+				startAlphaAnimation(mFavorize, ALPHA_ANIMATIONS_DURATION, View.VISIBLE);
+				mIsFavorizeButtonVisible = true;
+				invalidateOptionsMenu();
+			}
+		}
+	}
 
     /**
      * fades in or out the given View with the given time.
@@ -157,6 +205,8 @@ public class DetailActivity extends BottomNavigationActivity
 		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
 		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getBackdropPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
 	    }
+	    setSupportActionBar(mToolbar);
+	    getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
 }

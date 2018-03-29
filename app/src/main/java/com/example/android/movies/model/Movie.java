@@ -92,7 +92,7 @@ public class Movie {
 
             JSONArray jsonSpokenLanguages = jsonMovie.getJSONArray("spoken_languages");
             mSpokenLanguages = new HashMap<>();
-            for (int i = 0; i < jsonGenres.length(); i++) {
+            for (int i = 0; i < jsonSpokenLanguages.length(); i++) {
                 mSpokenLanguages.put(jsonSpokenLanguages.getJSONObject(i).getString("iso_639_1"),
                         jsonSpokenLanguages.getJSONObject(i).getString("name"));
             }

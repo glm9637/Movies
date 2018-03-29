@@ -116,6 +116,16 @@
         </LinearLayout>
     </android.support.v7.widget.Toolbar>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_favorize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_favorite_border_white_24dp"
+        app:layout_anchor="@id/main.collapsing"
+        app:layout_anchorGravity="bottom|right|end"/>
+
     <ImageView
         android:id="@+id/poster_view"
         android:layout_width="128dp"
