@@ -20,4 +20,19 @@
         android:icon="@drawable/ic_perm_media_white_24dp"
         android:title="@string/media"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_trailer"
+        android:enabled="true"
+        android:icon="@drawable/ic_movie_filter_white_24dp"
+        android:title="@string/trailer"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_review"
+        android:enabled="true"
+        android:icon="@drawable/ic_comment_white_24dp"
+        android:title="@string/reviews"
+        app:showAsAction="ifRoom"/>
+
 </menu>

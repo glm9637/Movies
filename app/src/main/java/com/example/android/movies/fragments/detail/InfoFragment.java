@@ -129,11 +129,13 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	public void onLoadFinished(@NonNull Loader<Movie> loader, Movie data) {
 		if (loader.getId() == Constants.LOADER_ID_MOVIE) {
 			mData = data;
-			if (mData == null) {
-				((BottomNavigationActivity) getActivity()).hideBottomBar();
-				Snackbar.make(mRootView, R.string.error_loading_movie, Snackbar.LENGTH_INDEFINITE).show();
-			} else {
-				initData();
+			if(isAdded()) {
+				if (mData == null) {
+					((BottomNavigationActivity) getActivity()).hideBottomBar();
+					Snackbar.make(mRootView, R.string.error_loading_movie, Snackbar.LENGTH_INDEFINITE).show();
+				} else {
+					initData();
+				}
 			}
 		}
 	}

@@ -83,6 +83,12 @@ public class NetworkHelper {
         return "http://image.tmdb.org/t/p/" + size + path;
 
     }
+    
+    public static String getTrailerImageUrl(String key){
+    	String url = String.format("https://img.youtube.com/vi/%s/0.jpg",key);
+    	Log.w("TrailerImageUrl",url);
+    	return url;
+    }
 
     /**
      * The different image sizes to load, small for a poster inside a column, medium for a title image, and original, well, for the original Image.

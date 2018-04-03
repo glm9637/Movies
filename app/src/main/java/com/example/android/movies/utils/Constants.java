@@ -11,6 +11,8 @@ public class Constants {
     public static final int LOADER_ID_MOVIE = 4;
     public static final int LOADER_ID_MEDIA = 5;
     public static final int LOADER_ID_CREDITS = 6;
+	public static final int LOADER_ID_TRAILER = 7;
+	public static final int LOADER_ID_REVIEW = 8;
     public static final String MOVIE_ID = "movie/id";
     public static final String INTENT_BUNDLE = "bundle";
 	

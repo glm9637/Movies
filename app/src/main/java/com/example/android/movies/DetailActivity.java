@@ -1,5 +1,6 @@
 package com.example.android.movies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,6 +18,8 @@ import android.widget.TextView;
 import com.example.android.movies.fragments.detail.CastFragment;
 import com.example.android.movies.fragments.detail.InfoFragment;
 import com.example.android.movies.fragments.detail.MediaFragment;
+import com.example.android.movies.fragments.detail.ReviewFragment;
+import com.example.android.movies.fragments.detail.TrailerFragment;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.example.android.movies.utils.Constants;
@@ -41,7 +45,7 @@ public class DetailActivity extends BottomNavigationActivity
     private ImageView mPosterImageView;
     private ImageView mBackDropImageView;
     private TextView mTitleTextExpanded;
-
+	private ListMovie mMovie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class DetailActivity extends BottomNavigationActivity
 
     @Override
     protected void setupFragments() {
+    	mMovie = getIntent().getBundleExtra(Constants.INTENT_BUNDLE).getParcelable(Constants.INTENT_BUNDLE_MOVIE);
         InfoFragment infoFragment = new InfoFragment();
         infoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_description, infoFragment);
@@ -65,7 +70,15 @@ public class DetailActivity extends BottomNavigationActivity
         MediaFragment mediaFragment = new MediaFragment();
         mediaFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_media,mediaFragment);
-
+	
+	    TrailerFragment trailerFragment = new TrailerFragment();
+	    trailerFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
+		addFragment(R.id.action_trailer,trailerFragment);
+	
+	    ReviewFragment reviewFragment = new ReviewFragment();
+	    reviewFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
+	    addFragment(R.id.action_review,reviewFragment);
+	    
         setStartFragment(R.id.action_description);
     }
 
@@ -85,11 +98,32 @@ public class DetailActivity extends BottomNavigationActivity
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		
 		if(!mIsFavorizeButtonVisible) {
-			menu.add(0,0,0,"Favorize")
+			menu.add(0,R.id.menu_item_favorize,0,"Favorize")
 					.setIcon(R.drawable.ic_favorite_border_white_24dp)
 					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
 		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()){
+			case R.id.menu_item_share:
+				Intent shareIntent = new Intent(Intent.ACTION_SEND);
+				shareIntent.setType("text/plain");
+				shareIntent.putExtra(Intent.EXTRA_SUBJECT,mMovie.getTitle());
+				shareIntent.putExtra(Intent.EXTRA_TEXT,mMovie.getLink());
+				startActivity(Intent.createChooser(shareIntent,"Share this movie"));
+				break;
+			case R.id.menu_item_favorize:
+				break;
+		}
+		
+		return true;
+	}
+	
+	private void favorizeMovie(){
+ 
 	}
 	
 	private void bindActivity() {
@@ -165,7 +199,7 @@ public class DetailActivity extends BottomNavigationActivity
 	private void handleFavoriteFabVisibility(float percentage) {
 		if (percentage >= PERCENTAGE_TO_HIDE_FAVORITE_BUTTON) {
 			if (mIsFavorizeButtonVisible) {
-				startAlphaAnimation(mFavorize, ALPHA_ANIMATIONS_DURATION, View.INVISIBLE);
+				startAlphaAnimation(mFavorize, ALPHA_ANIMATIONS_DURATION, View.GONE);
 				mIsFavorizeButtonVisible = false;
 				invalidateOptionsMenu();
 			}
@@ -183,14 +217,31 @@ public class DetailActivity extends BottomNavigationActivity
     /**
      * fades in or out the given View with the given time.
      */
-    public static void startAlphaAnimation(View v, long duration, int visibility) {
+    public static void startAlphaAnimation(final View v,final long duration, final int visibility) {
         AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
                 ? new AlphaAnimation(0f, 1f)
                 : new AlphaAnimation(1f, 0f);
 
         alphaAnimation.setDuration(duration);
         alphaAnimation.setFillAfter(true);
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+	        @Override
+	        public void onAnimationStart(Animation animation) {
+		
+	        }
+	
+	        @Override
+	        public void onAnimationEnd(Animation animation) {
+				v.setVisibility(visibility);
+	        }
+	
+	        @Override
+	        public void onAnimationRepeat(Animation animation) {
+		
+	        }
+        });
         v.startAnimation(alphaAnimation);
+        
     }
 
     /**

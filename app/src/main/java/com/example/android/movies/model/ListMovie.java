@@ -218,4 +218,8 @@ public class ListMovie implements Parcelable {
 			dest.writeLong(mReleaseDate.getTime());
 		
 	}
+	
+	public String getLink() {
+		return "https://www.themoviedb.org/movie/"+mId;
+	}
 }
