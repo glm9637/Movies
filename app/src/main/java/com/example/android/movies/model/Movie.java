@@ -1,13 +1,16 @@
 package com.example.android.movies.model;
 
+import android.content.ContentValues;
 import android.util.SparseArray;
 
+import com.example.android.movies.database.MovieContract;
 import com.example.android.movies.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -108,6 +111,29 @@ public class Movie {
         }
 
     }
+    
+    public Movie(ContentValues values){
+    	mId = values.getAsInteger(MovieContract.MovieEntry._ID);
+	    mTitle= values.getAsString(MovieContract.MovieEntry.COLUMN_NAME);
+	    mVoteAverage= values.getAsDouble(MovieContract.MovieEntry.COLUMN_RATING);
+	    mVoteCount = values.getAsInteger(MovieContract.MovieEntry.COLUMN_VOTE_COUNT);
+	    mOverview = values.getAsString(MovieContract.MovieEntry.COLUMN_DESCRIPTION);
+	    mRuntime = values.getAsInteger(MovieContract.MovieEntry.COLUMN_RUNTIME);
+	    mReleaseDate = Utils.parseToDate(values.getAsString(MovieContract.MovieEntry.COLUMN_RELEASE));
+	    mBudget = values.getAsInteger(MovieContract.MovieEntry.COLUMN_BUDGET);
+	    mRevenue = values.getAsInteger(MovieContract.MovieEntry.COLUMN_REVENUE);
+	    mGenres = new SparseArray<>();
+	    try {
+	    	JSONArray genres = new JSONArray(values.getAsString(MovieContract.GenreEntry.TABLE_NAME));
+	    	for(int i=0;i<genres.length();i++){
+	    		int id = genres.getJSONObject(i).getInt(MovieContract.GenreEntry._ID);
+	    		String name = genres.getJSONObject(i).getString(MovieContract.GenreEntry.COLUMN_NAME);
+	    		mGenres.append(id,name);
+		    }
+	    }catch (JSONException ex){
+	    	ex.printStackTrace();
+	    }
+    }
 
     public boolean isAdult() {
         return mIsAdult;
@@ -207,5 +233,43 @@ public class Movie {
 
     public int getVoteCount() {
         return mVoteCount;
+    }
+    
+    private String getGenreListeAsJson() {
+    	if(mGenres==null){
+    		return "";
+	    }
+    	JSONArray genreList = new JSONArray();
+    	for(int i = 0;i<mGenres.size();i++){
+    		JSONObject genre = new JSONObject();
+		    try {
+			    genre.put(MovieContract.GenreEntry._ID,mGenres.keyAt(i));
+			    genre.put(MovieContract.GenreEntry.COLUMN_NAME, mGenres.valueAt(i));
+			    genreList.put(genre);
+		    } catch (JSONException e) {
+			    e.printStackTrace();
+		    }
+	    }
+	    return genreList.toString();
+    }
+	
+	
+	/**
+	 * Creates the content value to save the Movie, but leaves out the path for the Backdrop and the Poster Images
+	 * @return the filled ContentValues describing the Movie
+	 */
+	public ContentValues getContentValues() {
+    	ContentValues cv = new ContentValues();
+    	cv.put(MovieContract.GenreEntry.TABLE_NAME,getGenreListeAsJson());
+    	cv.put(MovieContract.MovieEntry._ID, mId);
+    	cv.put(MovieContract.MovieEntry.COLUMN_NAME, mTitle);
+    	cv.put(MovieContract.MovieEntry.COLUMN_RATING, mVoteAverage);
+    	cv.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, mVoteCount);
+    	cv.put(MovieContract.MovieEntry.COLUMN_DESCRIPTION, mOverview);
+    	cv.put(MovieContract.MovieEntry.COLUMN_RUNTIME,mRuntime);
+    	cv.put(MovieContract.MovieEntry.COLUMN_RELEASE,Utils.parseToString(mReleaseDate));
+    	cv.put(MovieContract.MovieEntry.COLUMN_BUDGET, mBudget);
+    	cv.put(MovieContract.MovieEntry.COLUMN_REVENUE, mRevenue);
+    	return cv;
     }
 }

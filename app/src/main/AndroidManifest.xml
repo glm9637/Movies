@@ -23,6 +23,11 @@
             android:parentActivityName=".OverviewActivity"
             android:theme="@style/DetailTheme">
         </activity>
+        <provider
+            android:authorities="com.example.android.movies"
+            android:name=".database.MovieProvider"
+            android:exported="false"
+            />
     </application>
 
 </manifest>

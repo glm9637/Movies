@@ -1,11 +1,21 @@
 package com.example.android.movies;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.movies.database.MovieContract;
 import com.example.android.movies.fragments.detail.CastFragment;
 import com.example.android.movies.fragments.detail.InfoFragment;
 import com.example.android.movies.fragments.detail.MediaFragment;
@@ -23,10 +34,14 @@ import com.example.android.movies.fragments.detail.TrailerFragment;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.example.android.movies.utils.Constants;
+import com.example.android.movies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class DetailActivity extends BottomNavigationActivity
-        implements AppBarLayout.OnOffsetChangedListener {
+        implements AppBarLayout.OnOffsetChangedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
@@ -36,7 +51,8 @@ public class DetailActivity extends BottomNavigationActivity
     private boolean mIsTheTitleVisible = false;
     private boolean mIsTheTitleContainerVisible = true;
     private boolean mIsFavorizeButtonVisible = true;
-
+	private boolean mIsFavoritMovie = false;
+    
     private LinearLayout mTitleContainer;
     private TextView mTitle;
     private FloatingActionButton mFavorize;
@@ -46,6 +62,7 @@ public class DetailActivity extends BottomNavigationActivity
     private ImageView mBackDropImageView;
     private TextView mTitleTextExpanded;
 	private ListMovie mMovie;
+	private InfoFragment mInfoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,14 +71,15 @@ public class DetailActivity extends BottomNavigationActivity
         initUI();
         mAppBarLayout.addOnOffsetChangedListener(this);
         startAlphaAnimation(mTitle, 0, View.INVISIBLE);
+	    getSupportLoaderManager().initLoader(Constants.LOADER_ID_MOVIE_INTERNAL, null, this).forceLoad();
     }
 
     @Override
     protected void setupFragments() {
     	mMovie = getIntent().getBundleExtra(Constants.INTENT_BUNDLE).getParcelable(Constants.INTENT_BUNDLE_MOVIE);
-        InfoFragment infoFragment = new InfoFragment();
-        infoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
-        addFragment(R.id.action_description, infoFragment);
+        mInfoFragment = new InfoFragment();
+        mInfoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
+        addFragment(R.id.action_description, mInfoFragment);
 
         CastFragment castFragment = new CastFragment();
         castFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
@@ -99,7 +117,7 @@ public class DetailActivity extends BottomNavigationActivity
 		
 		if(!mIsFavorizeButtonVisible) {
 			menu.add(0,R.id.menu_item_favorize,0,"Favorize")
-					.setIcon(R.drawable.ic_favorite_border_white_24dp)
+					.setIcon(mIsFavoritMovie?R.drawable.ic_favorite_red_24dp: R.drawable.ic_favorite_border_white_24dp)
 					.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		}
 		return super.onPrepareOptionsMenu(menu);
@@ -116,15 +134,12 @@ public class DetailActivity extends BottomNavigationActivity
 				startActivity(Intent.createChooser(shareIntent,"Share this movie"));
 				break;
 			case R.id.menu_item_favorize:
-				break;
+				toggleFavorit();
 		}
 		
 		return true;
 	}
 	
-	private void favorizeMovie(){
- 
-	}
 	
 	private void bindActivity() {
         mToolbar = findViewById(R.id.main_toolbar);
@@ -258,6 +273,96 @@ public class DetailActivity extends BottomNavigationActivity
 	    }
 	    setSupportActionBar(mToolbar);
 	    getSupportActionBar().setDisplayShowTitleEnabled(false);
+	    mFavorize.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+				toggleFavorit();
+		    }
+	    });
+	    
     }
-
+    
+    private void toggleFavorit(){
+    	mIsFavoritMovie = !mIsFavoritMovie;
+    	setFavoritUI();
+    	Runnable r = new Runnable() {
+		    @Override
+		    public void run() {
+			    if(mIsFavoritMovie){
+				    ContentValues data = mInfoFragment.getMovieData();
+				
+				    String posterPath = saveToInternalStorage(Utils.drawableToBitmap(mPosterImageView.getDrawable()),"poster");
+				    String backdropPath = saveToInternalStorage(Utils.drawableToBitmap(mBackDropImageView.getDrawable()),"backdrop");
+				    data.put(MovieContract.MovieEntry.COLUMN_POSTER,posterPath);
+				    data.put(MovieContract.MovieEntry.COLUMN_BACKDROP, backdropPath);
+				    getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,data);
+			    }else {
+				    deleteFromInternalStorage();
+				    getContentResolver().delete(ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI,mMovie.getId()),null,null);
+			    }
+		    }
+	    };
+    	Thread t = new Thread(r);
+    	t.start();
+    }
+    
+    private void setFavoritUI(){
+    	mFavorize.setImageResource(mIsFavoritMovie?R.drawable.ic_favorite_red_24dp: R.drawable.ic_favorite_border_white_24dp);
+    	invalidateOptionsMenu();
+    }
+    
+    private void deleteFromInternalStorage(){
+	    ContextWrapper cw = new ContextWrapper(getApplicationContext());
+	    File directory = cw.getDir(mMovie.getId().toString(), Context.MODE_PRIVATE);
+	    directory.delete();
+	    
+    }
+	
+	private String saveToInternalStorage(Bitmap bitmapImage, String name){
+		ContextWrapper cw = new ContextWrapper(getApplicationContext());
+		File directory = cw.getDir(mMovie.getId().toString(), Context.MODE_PRIVATE);
+		File mypath=new File(directory,name+".jpg");
+		
+		FileOutputStream fos = null;
+		try {
+			// fos = openFileOutput(filename, Context.MODE_PRIVATE);
+			
+			fos = new FileOutputStream(mypath);
+			
+			// Use the compress method on the BitMap object to write image to the OutputStream
+			bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+			fos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return directory.getAbsolutePath();
+	}
+	
+	@NonNull
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+    	switch (id){
+//		    case Constants.LOADER_ID_MOVIE_INTERNAL:
+		    default:
+			    return new android.support.v4.content.CursorLoader(this, MovieContract.MovieEntry.CONTENT_URI,null,null,null,null);
+	    }
+		
+	}
+	
+	@Override
+	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        if(data == null) {
+	        mIsFavoritMovie =false;
+        }else {
+	        mIsFavoritMovie = data.moveToFirst();
+	        data.close();
+        }
+		
+		setFavoritUI();
+	}
+	
+	@Override
+	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+	
+	}
 }

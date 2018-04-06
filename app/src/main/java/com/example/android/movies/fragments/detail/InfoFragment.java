@@ -1,5 +1,6 @@
 package com.example.android.movies.fragments.detail;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -143,5 +144,9 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	@Override
 	public void onLoaderReset(@NonNull Loader<Movie> loader) {
 	
+	}
+	
+	public ContentValues getMovieData() {
+		return  mData.getContentValues();
 	}
 }
