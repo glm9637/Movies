@@ -55,9 +55,6 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 		
 		db.execSQL(createTable);
 		
-		
-		db.execSQL(createTable);
-		
 		String createIndex = "CREATE INDEX %s ON %s(%s)";
 		db.execSQL(String.format(createIndex, MovieEntry.INDEX_MOVIE_NAME, MovieEntry.TABLE_NAME,MovieEntry.COLUMN_NAME));
 		

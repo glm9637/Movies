@@ -145,7 +145,7 @@ public class MovieProvider extends ContentProvider {
 		SQLiteDatabase db = mMovieDbHelper.getWritableDatabase();
 		int match = sUriMatcher.match(uri);
 		switch (match) {
-			case MOVIE:
+			case MOVIE_WITH_ID:
 				selection = MovieContract.MovieGenreEntry.COLUMN_MOVIE_ID + "=?";
 				selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 				db.delete(MovieContract.MovieGenreEntry.TABLE_NAME, selection, selectionArgs);

@@ -1,5 +1,6 @@
 package com.example.android.movies.fragments.detail;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import com.example.android.movies.BottomNavigationActivity;
 import com.example.android.movies.R;
 import com.example.android.movies.Views.CircularRatingBar;
+import com.example.android.movies.database.DatabaseMovieLoader;
+import com.example.android.movies.database.MovieContract;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.model.Movie;
 import com.example.android.movies.networking.loader.MovieLoader;
@@ -83,7 +87,7 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 				mOverview.setText(overview);
 				int voteCount = listMovie.getVoteCount();
 				mVoteCount.setText(String.format("%s %s", String.valueOf(voteCount), getString(R.string.votes)));
-				Double voteAverage = listMovie.getVoteAverage()*10;
+				Double voteAverage = listMovie.getVoteAverage() * 10;
 				mRating.setRatingPercent(voteAverage);
 				String releaseDate = Utils.parseToString(listMovie.getReleaseDate());
 				mReleaseDate.setText(releaseDate);
@@ -123,20 +127,33 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	@NonNull
 	@Override
 	public Loader<Movie> onCreateLoader(int id, @Nullable Bundle args) {
-		return new MovieLoader(mContext, mMovieID);
+		switch (id) {
+			case Constants.LOADER_ID_FAVORIT_INTERNAL:
+				return new DatabaseMovieLoader(mContext,mMovieID);
+			default:
+				return new MovieLoader(mContext, mMovieID);
+		}
+		
 	}
 	
 	@Override
 	public void onLoadFinished(@NonNull Loader<Movie> loader, Movie data) {
 		if (loader.getId() == Constants.LOADER_ID_MOVIE) {
 			mData = data;
-			if(isAdded()) {
+			if (isAdded()) {
 				if (mData == null) {
 					((BottomNavigationActivity) getActivity()).hideBottomBar();
-					Snackbar.make(mRootView, R.string.error_loading_movie, Snackbar.LENGTH_INDEFINITE).show();
+					Snackbar.make(mRootView, R.string.error_loading_movie, Snackbar.LENGTH_LONG).show();
+					if (getActivity() != null)
+						getActivity().getSupportLoaderManager().initLoader(Constants.LOADER_ID_FAVORIT_INTERNAL, null, this).forceLoad();
 				} else {
 					initData();
 				}
+			}
+		}else if(loader.getId() == Constants.LOADER_ID_FAVORIT_INTERNAL){
+			mData = data;
+			if(isAdded() && mData != null){
+				initData();
 			}
 		}
 	}
@@ -147,6 +164,6 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	}
 	
 	public ContentValues getMovieData() {
-		return  mData.getContentValues();
+		return mData.getContentValues();
 	}
 }

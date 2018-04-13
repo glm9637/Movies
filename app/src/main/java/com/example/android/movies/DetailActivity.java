@@ -7,7 +7,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -342,9 +342,9 @@ public class DetailActivity extends BottomNavigationActivity
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
     	switch (id){
-//		    case Constants.LOADER_ID_MOVIE_INTERNAL:
 		    default:
-			    return new android.support.v4.content.CursorLoader(this, MovieContract.MovieEntry.CONTENT_URI,null,null,null,null);
+			    Uri movieUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI,mMovie.getId());
+			    return new android.support.v4.content.CursorLoader(this, movieUri ,null,null,null,null);
 	    }
 		
 	}
