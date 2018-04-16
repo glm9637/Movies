@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.android.movies.fragments.overview.FavoritFragment;
 import com.example.android.movies.fragments.overview.MoviePosterFragment;
 import com.example.android.movies.fragments.overview.PopularMoviesFragment;
 import com.example.android.movies.fragments.overview.TopRatedFragment;
@@ -14,6 +15,8 @@ import com.example.android.movies.fragments.overview.UpcomingMoviesFragment;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class OverviewActivity extends BottomNavigationActivity implements MoviePosterFragment.LoadTopImage {
 	
@@ -48,6 +51,7 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 		mNavigationItemSelectedListener = new NavigationItemSelected() {
 			@Override
 			public void onNavigationItemSelected(MenuItem item) {
+				mAppBarLayout.setVisibility(View.VISIBLE);
 				mAppBarLayout.setExpanded(true, true);
 			}
 			
@@ -66,6 +70,9 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 		MoviePosterFragment upcomingMovies = new UpcomingMoviesFragment();
 		upcomingMovies.setLoadTopImageListener(OverviewActivity.this);
 		addFragment(R.id.action_upcoming, upcomingMovies);
+		FavoritFragment favoritMovies = new FavoritFragment();
+		favoritMovies.setLoadTopImageListener(OverviewActivity.this);
+		addFragment(R.id.action_favorit, favoritMovies);
 		setStartFragment(R.id.action_top_rated);
 		
 	}
@@ -88,7 +95,16 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 			mAppBarLayout.setExpanded(true);
 		}
 		mTopImageView.setOnClickListener(onPosterClick);
-		Picasso.with(this).load(NetworkHelper.getImageUrl(topMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).into(mTopImageView);
+		if (topMovie != null) {
+			if (topMovie.getPosterPath().contains("poster.jpg")) {
+				Picasso.with(this).load(new File(topMovie.getPosterPath())).into(mTopImageView);
+			} else {
+				Picasso.with(this).load(NetworkHelper.getImageUrl(topMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).into(mTopImageView);
+			}
+		} else {
+			mTopImageView.setImageDrawable(null);
+		}
+		
 	}
 	
 	@Override

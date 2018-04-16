@@ -26,7 +26,11 @@ public class DatabaseMovieLoader extends AsyncTaskLoader<Movie> {
 		Cursor movieData = getContext().getContentResolver().query(ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI,mMovieID),null,null,null,null);
 		if(movieData.moveToFirst()) {
 			Cursor genreData = getContext().getContentResolver().query(ContentUris.withAppendedId(MovieContract.MovieGenreEntry.CONTENT_URI, mMovieID), null, null, null, null);
-			return new Movie(movieData, genreData);
+			Movie movie =new Movie(movieData, genreData);
+			movieData.close();
+			genreData.close();
+			return movie;
+			
 		}
 		return null;
 	}

@@ -57,6 +57,8 @@ public class MovieProvider extends ContentProvider {
 		SQLiteDatabase db = mMovieDbHelper.getReadableDatabase();
 		int match = sUriMatcher.match(uri);
 		switch (match) {
+			case MOVIE:
+				return db.query(MovieContract.MovieEntry.TABLE_NAME,null,selection,selectionArgs,null,null,null);
 			case MOVIE_WITH_ID:
 				selection = MovieContract.MovieEntry._ID + "=?";
 				selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};

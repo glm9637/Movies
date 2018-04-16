@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.movies.BottomNavigationActivity;
+import com.example.android.movies.DetailActivity;
 import com.example.android.movies.R;
 import com.example.android.movies.Views.CircularRatingBar;
 import com.example.android.movies.database.DatabaseMovieLoader;
@@ -153,6 +154,7 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 		}else if(loader.getId() == Constants.LOADER_ID_FAVORIT_INTERNAL){
 			mData = data;
 			if(isAdded() && mData != null){
+				((DetailActivity) getActivity()).setImages(mData.getBackdropImagePath(),mData.getPosterImagePath());
 				initData();
 			}
 		}

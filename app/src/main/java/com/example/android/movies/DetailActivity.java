@@ -32,6 +32,7 @@ import com.example.android.movies.fragments.detail.MediaFragment;
 import com.example.android.movies.fragments.detail.ReviewFragment;
 import com.example.android.movies.fragments.detail.TrailerFragment;
 import com.example.android.movies.model.ListMovie;
+import com.example.android.movies.model.Movie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.example.android.movies.utils.Constants;
 import com.example.android.movies.utils.Utils;
@@ -61,7 +62,8 @@ public class DetailActivity extends BottomNavigationActivity
     private ImageView mPosterImageView;
     private ImageView mBackDropImageView;
     private TextView mTitleTextExpanded;
-	private ListMovie mMovie;
+	private ListMovie mListMovie;
+	private Movie mMovie;
 	private InfoFragment mInfoFragment;
 
     @Override
@@ -76,7 +78,7 @@ public class DetailActivity extends BottomNavigationActivity
 
     @Override
     protected void setupFragments() {
-    	mMovie = getIntent().getBundleExtra(Constants.INTENT_BUNDLE).getParcelable(Constants.INTENT_BUNDLE_MOVIE);
+    	mListMovie = getIntent().getBundleExtra(Constants.INTENT_BUNDLE).getParcelable(Constants.INTENT_BUNDLE_MOVIE);
         mInfoFragment = new InfoFragment();
         mInfoFragment.setArguments(getIntent().getBundleExtra(Constants.INTENT_BUNDLE));
         addFragment(R.id.action_description, mInfoFragment);
@@ -129,8 +131,8 @@ public class DetailActivity extends BottomNavigationActivity
 			case R.id.menu_item_share:
 				Intent shareIntent = new Intent(Intent.ACTION_SEND);
 				shareIntent.setType("text/plain");
-				shareIntent.putExtra(Intent.EXTRA_SUBJECT,mMovie.getTitle());
-				shareIntent.putExtra(Intent.EXTRA_TEXT,mMovie.getLink());
+				shareIntent.putExtra(Intent.EXTRA_SUBJECT, mListMovie.getTitle());
+				shareIntent.putExtra(Intent.EXTRA_TEXT, mListMovie.getLink());
 				startActivity(Intent.createChooser(shareIntent,"Share this movie"));
 				break;
 			case R.id.menu_item_favorize:
@@ -268,8 +270,13 @@ public class DetailActivity extends BottomNavigationActivity
 	    if(listMovie!=null) {
 		    mTitle.setText(listMovie.getTitle());
 		    mTitleTextExpanded.setText(listMovie.getTitle());
-		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
-		    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getBackdropPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+		    if(listMovie.getPosterPath().contains("poster.jpg")){
+			    Picasso.with(this).load(new File(listMovie.getPosterPath())).placeholder(R.drawable.progress_animation).into(mPosterImageView);
+			    Picasso.with(this).load(new File(listMovie.getBackdropPath())).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+		    }else {
+			    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getPosterPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
+			    Picasso.with(this).load(NetworkHelper.getImageUrl(listMovie.getBackdropPath(), NetworkHelper.ImageSize.medium)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+		    }
 	    }
 	    setSupportActionBar(mToolbar);
 	    getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -280,6 +287,11 @@ public class DetailActivity extends BottomNavigationActivity
 		    }
 	    });
 	    
+    }
+    
+    public void setImages(String backropPath, String posterPath){
+    	Picasso.with(this).load(new File(backropPath)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+    	Picasso.with(this).load(new File(posterPath)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
     }
     
     private void toggleFavorit(){
@@ -298,7 +310,7 @@ public class DetailActivity extends BottomNavigationActivity
 				    getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI,data);
 			    }else {
 				    deleteFromInternalStorage();
-				    getContentResolver().delete(ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI,mMovie.getId()),null,null);
+				    getContentResolver().delete(ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, mListMovie.getId()),null,null);
 			    }
 		    }
 	    };
@@ -313,14 +325,14 @@ public class DetailActivity extends BottomNavigationActivity
     
     private void deleteFromInternalStorage(){
 	    ContextWrapper cw = new ContextWrapper(getApplicationContext());
-	    File directory = cw.getDir(mMovie.getId().toString(), Context.MODE_PRIVATE);
+	    File directory = cw.getDir(mListMovie.getId().toString(), Context.MODE_PRIVATE);
 	    directory.delete();
 	    
     }
 	
 	private String saveToInternalStorage(Bitmap bitmapImage, String name){
 		ContextWrapper cw = new ContextWrapper(getApplicationContext());
-		File directory = cw.getDir(mMovie.getId().toString(), Context.MODE_PRIVATE);
+		File directory = cw.getDir(mListMovie.getId().toString(), Context.MODE_PRIVATE);
 		File mypath=new File(directory,name+".jpg");
 		
 		FileOutputStream fos = null;
@@ -335,7 +347,7 @@ public class DetailActivity extends BottomNavigationActivity
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return directory.getAbsolutePath();
+		return mypath.getPath();
 	}
 	
 	@NonNull
@@ -343,7 +355,7 @@ public class DetailActivity extends BottomNavigationActivity
 	public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
     	switch (id){
 		    default:
-			    Uri movieUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI,mMovie.getId());
+			    Uri movieUri = ContentUris.withAppendedId(MovieContract.MovieEntry.CONTENT_URI, mListMovie.getId());
 			    return new android.support.v4.content.CursorLoader(this, movieUri ,null,null,null,null);
 	    }
 		

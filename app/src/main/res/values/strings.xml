@@ -34,5 +34,6 @@
     <string name="trailer">Trailer</string>
     <string name="reviews">Reviews</string>
     <string name="txt_no_reviews">There are currently no reviews for this film :(</string>
+    <string name="favorite">Favorite</string>
 
 </resources>

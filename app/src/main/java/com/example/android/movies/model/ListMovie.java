@@ -1,8 +1,11 @@
 package com.example.android.movies.model;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.SparseArray;
 
+import com.example.android.movies.database.MovieContract;
 import com.example.android.movies.utils.Utils;
 
 import org.json.JSONArray;
@@ -72,6 +75,17 @@ public class ListMovie implements Parcelable {
         }
 
     }
+	
+	public ListMovie(Cursor movieData) {
+		mId = movieData.getInt(movieData.getColumnIndex(MovieContract.MovieEntry._ID));
+		mTitle = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_NAME));
+		mVoteAverage = movieData.getDouble(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_RATING));
+		mVoteCount = movieData.getInt(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_VOTE_COUNT));
+		mOverview = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_DESCRIPTION));
+		mReleaseDate = Utils.parseToDate(movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE)));
+		mPosterPath = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER));
+		mBackdropPath = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP));
+	}
 	
 	protected ListMovie(Parcel in) {
 		mPosterPath = in.readString();

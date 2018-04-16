@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_top_rated"
         android:enabled="true"
-        android:icon="@drawable/ic_favorite_border_white_24dp"
+        android:icon="@drawable/ic_star_border_white_24dp"
         android:title="@string/top_rated"
         app:showAsAction="ifRoom" />
     <item
@@ -19,5 +19,12 @@
         android:enabled="true"
         android:icon="@drawable/ic_access_time_white_24dp"
         android:title="@string/upcoming"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_favorit"
+        android:enabled="true"
+        android:icon="@drawable/ic_favorite_border_white_24dp"
+        android:title="@string/favorite"
         app:showAsAction="ifRoom" />
 </menu>

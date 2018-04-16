@@ -23,7 +23,7 @@ public class Utils {
      * @return the string was parsed the representing date, else null
      */
     public static Date parseToDate(String dateValue){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(dateValue.contains("-")?"yyyy-MM-dd":"dd.MM.yyyy", Locale.US);
         try {
             return dateFormat.parse(dateValue);
         } catch (ParseException e) {

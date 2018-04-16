@@ -14,11 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.movies.model.ListMovie;
+import com.example.android.movies.model.Movie;
 import com.example.android.movies.networking.NetworkHelper;
 import com.example.android.movies.utils.Constants;
 import com.example.android.movies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +32,8 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     private LayoutInflater mInflater;
     private MovieSelectedListener mMovieSelectedListener;
     private ArrayList<ListMovie> mData;
-
+	private ArrayList<ListMovie> mDataOffline;
+    
     public interface MovieSelectedListener {
         void onMovieSelected(ImageView posterView, Bundle info);
     }
@@ -49,10 +52,17 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        ListMovie currentItem = mData.get(position+1);
-        Picasso.with(mInflater.getContext()).load(NetworkHelper.getImageUrl(currentItem.getPosterPath(), NetworkHelper.ImageSize.small)).placeholder(R.drawable.progress_animation).into(holder.mPosterView);
-        holder.mTitleText.setText(currentItem.getTitle());
-        holder.mOverviewText.setText(currentItem.getOverview());
+    	if(mData != null) {
+		    ListMovie currentItem = mData.get(position + 1);
+		    Picasso.with(mInflater.getContext()).load(NetworkHelper.getImageUrl(currentItem.getPosterPath(), NetworkHelper.ImageSize.small)).placeholder(R.drawable.progress_animation).into(holder.mPosterView);
+		    holder.mTitleText.setText(currentItem.getTitle());
+		    holder.mOverviewText.setText(currentItem.getOverview());
+	    }else if(mDataOffline != null){
+		    ListMovie currentItem = mDataOffline.get(position + 1);
+		    Picasso.with(mInflater.getContext()).load(new File(currentItem.getPosterPath())).placeholder(R.drawable.progress_animation).into(holder.mPosterView);
+		    holder.mTitleText.setText(currentItem.getTitle());
+		    holder.mOverviewText.setText(currentItem.getOverview());
+	    }
     }
 
     /**
@@ -60,8 +70,15 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
      * @param newData the new Data to display
      */
     public void setData(ArrayList<ListMovie> newData) {
+    	mDataOffline = null;
         mData = newData;
         notifyDataSetChanged();
+    }
+    
+    public void setOfflineData(ArrayList<ListMovie> newData){
+    	mData = null;
+    	mDataOffline = newData;
+    	notifyDataSetChanged();
     }
 
     /**
@@ -72,6 +89,9 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     public int getItemCount() {
         if (mData != null)
             return mData.size()-1;
+        if(mDataOffline!=null){
+        	return mDataOffline.size()-1;
+        }
         return 0;
     }
 
@@ -104,8 +124,13 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
                 @Override
                 public void onClick(View v) {
                     Bundle itemInfo = new Bundle();
-                    itemInfo.putParcelable(Constants.INTENT_BUNDLE_MOVIE,mData.get(getAdapterPosition()+1));
-                    itemInfo.putInt(Constants.MOVIE_ID,mData.get(getAdapterPosition()+1).getId());
+                    if(mData!=null) {
+	                    itemInfo.putParcelable(Constants.INTENT_BUNDLE_MOVIE, mData.get(getAdapterPosition() + 1));
+	                    itemInfo.putInt(Constants.MOVIE_ID, mData.get(getAdapterPosition() + 1).getId());
+                    }else if(mDataOffline!=null){
+	                    itemInfo.putParcelable(Constants.INTENT_BUNDLE_MOVIE, mDataOffline.get(getAdapterPosition() + 1));
+	                    itemInfo.putInt(Constants.MOVIE_ID, mDataOffline.get(getAdapterPosition() + 1).getId());
+                    }
                     mMovieSelectedListener.onMovieSelected(mPosterView,itemInfo);
                 }
             });

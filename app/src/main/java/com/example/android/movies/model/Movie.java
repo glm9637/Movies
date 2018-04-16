@@ -2,6 +2,8 @@ package com.example.android.movies.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.SparseArray;
 
 import com.example.android.movies.database.MovieContract;
@@ -19,7 +21,7 @@ import java.util.Map;
  * Created by glm9637 on 11.03.2018 13:30.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
 	private boolean mIsAdult;
 	private String mBackdropPath;
 	private Object mBelongsToCollection;
@@ -45,6 +47,8 @@ public class Movie {
 	private boolean mVideo;
 	private Double mVoteAverage;
 	private Integer mVoteCount;
+	private String mBackdropImagePath;
+	private String mPosterImagePath;
 	
 	/**
 	 * create a new Movie Object from a jsonValue
@@ -146,16 +150,16 @@ public class Movie {
 		mReleaseDate = Utils.parseToDate(movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_RELEASE)));
 		mBudget = movieData.getInt(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_BUDGET));
 		mRevenue = movieData.getInt(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_REVENUE));
-		movieData.close();
+		mBackdropImagePath = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_BACKDROP));
+		mPosterImagePath = movieData.getString(movieData.getColumnIndex(MovieContract.MovieEntry.COLUMN_POSTER));
 		mGenres = new SparseArray<>();
-		if (genreData.moveToFirst()) {
+		if (genreData!=null && genreData.moveToFirst()) {
 			do{
 				int id = genreData.getInt(genreData.getColumnIndex(MovieContract.GenreEntry._ID));
 				String name = genreData.getString(genreData.getColumnIndex(MovieContract.GenreEntry.COLUMN_NAME));
 				mGenres.append(id, name);
 			}while (genreData.moveToFirst());
 		}
-		genreData.close();
 	}
 	
 	public boolean isAdult() {
@@ -164,6 +168,10 @@ public class Movie {
 	
 	public String getBackdropPath() {
 		return mBackdropPath;
+	}
+	
+	public String getBackdropImagePath() {
+		return mBackdropImagePath;
 	}
 	
 	public Object getBelongsToCollection() {
@@ -208,6 +216,10 @@ public class Movie {
 	
 	public String getPosterPath() {
 		return mPosterPath;
+	}
+	
+	public String getPosterImagePath() {
+		return mPosterImagePath;
 	}
 	
 	public SparseArray<String> getProductionCompanies() {
@@ -296,4 +308,91 @@ public class Movie {
 		cv.put(MovieContract.MovieEntry.COLUMN_REVENUE, mRevenue);
 		return cv;
 	}
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeByte(this.mIsAdult ? (byte) 1 : (byte) 0);
+		dest.writeString(this.mBackdropPath);
+		dest.writeValue(this.mBudget);
+		dest.writeSparseArray((SparseArray) this.mGenres);
+		dest.writeString(this.mHomepage);
+		dest.writeValue(this.mId);
+		dest.writeString(this.mImdbId);
+		dest.writeString(this.mOriginalLanguage);
+		dest.writeString(this.mOriginalTitle);
+		dest.writeString(this.mOverview);
+		dest.writeValue(this.mPopularity);
+		dest.writeString(this.mPosterPath);
+		dest.writeSparseArray((SparseArray) this.mProductionCompanies);
+		dest.writeSparseArray((SparseArray) this.mProductionCountries);
+		dest.writeLong(this.mReleaseDate != null ? this.mReleaseDate.getTime() : -1);
+		dest.writeValue(this.mRevenue);
+		dest.writeValue(this.mRuntime);
+		dest.writeInt(this.mSpokenLanguages.size());
+		for (Map.Entry<String, String> entry : this.mSpokenLanguages.entrySet()) {
+			dest.writeString(entry.getKey());
+			dest.writeString(entry.getValue());
+		}
+		dest.writeString(this.mStatus);
+		dest.writeString(this.mTagline);
+		dest.writeString(this.mTitle);
+		dest.writeByte(this.mVideo ? (byte) 1 : (byte) 0);
+		dest.writeValue(this.mVoteAverage);
+		dest.writeValue(this.mVoteCount);
+		dest.writeString(this.mBackdropImagePath);
+		dest.writeString(this.mPosterImagePath);
+	}
+	
+	protected Movie(Parcel in) {
+		this.mIsAdult = in.readByte() != 0;
+		this.mBackdropPath = in.readString();
+		this.mBudget = (Integer) in.readValue(Integer.class.getClassLoader());
+		this.mGenres = in.readSparseArray(String.class.getClassLoader());
+		this.mHomepage = in.readString();
+		this.mId = (Integer) in.readValue(Integer.class.getClassLoader());
+		this.mImdbId = in.readString();
+		this.mOriginalLanguage = in.readString();
+		this.mOriginalTitle = in.readString();
+		this.mOverview = in.readString();
+		this.mPopularity = (Double) in.readValue(Double.class.getClassLoader());
+		this.mPosterPath = in.readString();
+		this.mProductionCompanies = in.readSparseArray(String.class.getClassLoader());
+		this.mProductionCountries = in.readSparseArray(String.class.getClassLoader());
+		long tmpMReleaseDate = in.readLong();
+		this.mReleaseDate = tmpMReleaseDate == -1 ? null : new Date(tmpMReleaseDate);
+		this.mRevenue = (Integer) in.readValue(Integer.class.getClassLoader());
+		this.mRuntime = (Integer) in.readValue(Integer.class.getClassLoader());
+		int mSpokenLanguagesSize = in.readInt();
+		this.mSpokenLanguages = new HashMap<String, String>(mSpokenLanguagesSize);
+		for (int i = 0; i < mSpokenLanguagesSize; i++) {
+			String key = in.readString();
+			String value = in.readString();
+			this.mSpokenLanguages.put(key, value);
+		}
+		this.mStatus = in.readString();
+		this.mTagline = in.readString();
+		this.mTitle = in.readString();
+		this.mVideo = in.readByte() != 0;
+		this.mVoteAverage = (Double) in.readValue(Double.class.getClassLoader());
+		this.mVoteCount = (Integer) in.readValue(Integer.class.getClassLoader());
+		this.mBackdropImagePath = in.readString();
+		this.mPosterImagePath = in.readString();
+	}
+	
+	public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+		@Override
+		public Movie createFromParcel(Parcel source) {
+			return new Movie(source);
+		}
+		
+		@Override
+		public Movie[] newArray(int size) {
+			return new Movie[size];
+		}
+	};
 }
