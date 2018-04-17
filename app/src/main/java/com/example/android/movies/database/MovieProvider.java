@@ -34,7 +34,7 @@ public class MovieProvider extends ContentProvider {
 		uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_GENRE , GENRE);
 		uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE_GENRE +"/#", MOVIE_GENRE);
 		uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE + "/#", MOVIE_WITH_ID);
-		uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIE_GENRE + "/#", GENRE_WITH_ID);
+		uriMatcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_GENRE + "/#", GENRE_WITH_ID);
 		
 		return uriMatcher;
 	}
@@ -68,13 +68,13 @@ public class MovieProvider extends ContentProvider {
 				selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
 				Cursor movieGenreCursor = db.query(MovieContract.MovieGenreEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
 				StringBuilder genreIDBuilder = new StringBuilder();
-				genreIDBuilder.append(MovieContract.GenreEntry._ID).append(" (");
+				genreIDBuilder.append(MovieContract.GenreEntry._ID).append(" in (");
 				if (movieGenreCursor.moveToFirst()) {
 					do {
 						genreIDBuilder.append(movieGenreCursor.getInt(movieGenreCursor.getColumnIndex(MovieContract.MovieGenreEntry.COLUMN_GENRE_ID))).append(", ");
 					} while (movieGenreCursor.moveToNext());
 					movieGenreCursor.close();
-					selection = genreIDBuilder.substring(0, genreIDBuilder.length() - 1) + ")";
+					selection = genreIDBuilder.substring(0, genreIDBuilder.length() - 2) + ")";
 					return db.query(MovieContract.GenreEntry.TABLE_NAME, null, selection, null, null, null, null);
 				}
 				return null;
@@ -105,6 +105,7 @@ public class MovieProvider extends ContentProvider {
 			case MOVIE:
 				String genres = values.getAsString(MovieContract.GenreEntry.TABLE_NAME);
 				int movieID = values.getAsInteger(MovieContract.MovieEntry._ID);
+				long insertedRows = 0;
 				values.remove(MovieContract.GenreEntry.TABLE_NAME);
 				db.insert(MovieContract.MovieEntry.TABLE_NAME,null,values);
 				try {
@@ -114,12 +115,18 @@ public class MovieProvider extends ContentProvider {
 						ContentValues genreValues = new ContentValues();
 						int genreID = genre.getInt(MovieContract.GenreEntry._ID);
 						genreValues.put(MovieContract.GenreEntry._ID,genreID);
-						genreValues.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getInt(MovieContract.GenreEntry.COLUMN_NAME));
-						insert(ContentUris.withAppendedId(MovieContract.GenreEntry.CONTENT_URI,genreID),genreValues);
+						genreValues.put(MovieContract.GenreEntry.COLUMN_NAME,genre.getString(MovieContract.GenreEntry.COLUMN_NAME));
+						insert(MovieContract.GenreEntry.CONTENT_URI,genreValues);
 						
 						ContentValues movieGenreValues = new ContentValues();
 						movieGenreValues.put(MovieContract.MovieGenreEntry.COLUMN_MOVIE_ID,movieID);
 						movieGenreValues.put(MovieContract.MovieGenreEntry.COLUMN_GENRE_ID,genreID);
+						try {
+							
+							insertedRows += db.insert(MovieContract.MovieGenreEntry.TABLE_NAME,null,movieGenreValues);
+						}catch (Exception ex){
+							ex.printStackTrace();
+						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();

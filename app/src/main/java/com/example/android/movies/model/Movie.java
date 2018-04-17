@@ -158,7 +158,7 @@ public class Movie implements Parcelable {
 				int id = genreData.getInt(genreData.getColumnIndex(MovieContract.GenreEntry._ID));
 				String name = genreData.getString(genreData.getColumnIndex(MovieContract.GenreEntry.COLUMN_NAME));
 				mGenres.append(id, name);
-			}while (genreData.moveToFirst());
+			}while (genreData.moveToNext());
 		}
 	}
 	
