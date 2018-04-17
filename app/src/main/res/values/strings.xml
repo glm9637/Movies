@@ -34,5 +34,7 @@
     <string name="reviews">Reviews</string>
     <string name="txt_no_reviews">There are currently no reviews for this film :(</string>
     <string name="favorite">Favorite</string>
+    <string name="no_favorites_title">No Favorites</string>
+    <string name="no_favorites_description">You don\'t have any favorites yet. Mark some Movies as favorite and return back here</string>
 
 </resources>

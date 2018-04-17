@@ -51,8 +51,8 @@ public class ErrorFragment extends Fragment {
 				Picasso.with(getContext()).load(R.drawable.ic_cloud_off_white_48dp).into(errorIcon);
 				break;
 			case Constants.ERROR_NO_FAVORITES:
-				titleText.setText("No Favorites");
-				titleText.setText("You don't have any favorites yet. Mark some Movies as favorite and return back here");
+				titleText.setText(R.string.no_favorites_title);
+				titleText.setText(R.string.no_favorites_description);
 				Picasso.with(getContext()).load(R.drawable.ic_not_interested_white_48dp).into(errorIcon);
 				mRetryButton.setVisibility(View.INVISIBLE);
 		}
