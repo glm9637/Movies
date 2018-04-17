@@ -24,5 +24,6 @@ public class Constants {
 	public static final String ERROR_TYPE = "ERROR_TYPE";
 	public static final int ERROR_NO_CONNECTION = 0;
 	public static final int ERROR_SOMETHING_WENT_WRONG = 1;
+	public static final int ERROR_NO_FAVORITES = 2;
 	public static final String INTENT_BUNDLE_MOVIE = "movie";
 }

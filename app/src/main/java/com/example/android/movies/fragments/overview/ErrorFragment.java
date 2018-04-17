@@ -29,7 +29,7 @@ public class ErrorFragment extends Fragment {
 	private View.OnClickListener mRetryClickListener;
 	
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		if(getArguments()!=null){
+		if (getArguments() != null) {
 			mErrorType = getArguments().getInt(Constants.ERROR_TYPE);
 		}
 		
@@ -39,7 +39,7 @@ public class ErrorFragment extends Fragment {
 		ImageView errorIcon = rootView.findViewById(R.id.error_icon);
 		mRetryButton = rootView.findViewById(R.id.btn_retry);
 		
-		switch (mErrorType){
+		switch (mErrorType) {
 			case Constants.ERROR_SOMETHING_WENT_WRONG:
 				titleText.setText(R.string.error_unknown);
 				descriptionText.setText(R.string.error_unknown_description);
@@ -50,18 +50,23 @@ public class ErrorFragment extends Fragment {
 				descriptionText.setText(R.string.error_no_connection_description);
 				Picasso.with(getContext()).load(R.drawable.ic_cloud_off_white_48dp).into(errorIcon);
 				break;
+			case Constants.ERROR_NO_FAVORITES:
+				titleText.setText("No Favorites");
+				titleText.setText("You don't have any favorites yet. Mark some Movies as favorite and return back here");
+				Picasso.with(getContext()).load(R.drawable.ic_not_interested_white_48dp).into(errorIcon);
+				mRetryButton.setVisibility(View.INVISIBLE);
 		}
 		
-		if(mRetryClickListener!=null){
+		if (mRetryClickListener != null) {
 			mRetryButton.setOnClickListener(mRetryClickListener);
 		}
 		
 		return rootView;
 	}
 	
-	public void setOnRetryClickListener(View.OnClickListener onRetryClickListener){
+	public void setOnRetryClickListener(View.OnClickListener onRetryClickListener) {
 		mRetryClickListener = onRetryClickListener;
-		if(mRetryButton!=null)
+		if (mRetryButton != null)
 			mRetryButton.setOnClickListener(onRetryClickListener);
 	}
 	

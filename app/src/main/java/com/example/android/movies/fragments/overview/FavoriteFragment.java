@@ -36,7 +36,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 	private MoviePosterAdapter mPosterAdapter;
 	private FragmentActivity mContext;
 	private MoviePosterFragment.LoadTopImage mLoadTopImage;
-
+	
 	/**
 	 * Adds a listener to load the first Image outside of the Recyclerview.
 	 * In this case at the Top of the Activity
@@ -122,8 +122,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 				}
 			});
 			
-		}else {
-			mLoadTopImage.onLoadTopImage(null,null);
+		} else {
+			mLoadTopImage.onError(Constants.ERROR_NO_FAVORITES);
+			
 		}
 		data.close();
 		mPosterAdapter.setOfflineData(movieData);
