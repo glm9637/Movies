@@ -136,7 +136,7 @@ public class DetailActivity extends BottomNavigationActivity
 				startActivity(Intent.createChooser(shareIntent,"Share this movie"));
 				break;
 			case R.id.menu_item_favorize:
-				toggleFavorit();
+				toggleFavorite();
 		}
 		
 		return true;
@@ -283,20 +283,29 @@ public class DetailActivity extends BottomNavigationActivity
 	    mFavorize.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
-				toggleFavorit();
+				toggleFavorite();
 		    }
 	    });
 	    
     }
-    
-    public void setImages(String backropPath, String posterPath){
-    	Picasso.with(this).load(new File(backropPath)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
+	
+	/**
+	 * Loads images into the two TopImageViews
+	 * @param backdropPath the local path to the backdropImage
+	 * @param posterPath the local path to the posterImage
+	 */
+	public void setImages(String backdropPath, String posterPath){
+    	Picasso.with(this).load(new File(backdropPath)).placeholder(R.drawable.progress_animation).into(mBackDropImageView);
     	Picasso.with(this).load(new File(posterPath)).placeholder(R.drawable.progress_animation).into(mPosterImageView);
     }
-    
-    private void toggleFavorit(){
+	
+	/**
+	 * Toggles if the current movie is saved as a favorite Movie
+	 */
+	private void toggleFavorite(){
     	mIsFavoritMovie = !mIsFavoritMovie;
-    	setFavoritUI();
+    	setFavoriteUI();
+    	//The Database and FileOperations are done in a separate Thread to ensure that the UI is not affected
     	Runnable r = new Runnable() {
 		    @Override
 		    public void run() {
@@ -317,19 +326,31 @@ public class DetailActivity extends BottomNavigationActivity
     	Thread t = new Thread(r);
     	t.start();
     }
-    
-    private void setFavoritUI(){
+	
+	/**
+	 * Sets the current Favorite-Status to the Fab and the Menu item
+	 */
+	private void setFavoriteUI(){
     	mFavorize.setImageResource(mIsFavoritMovie?R.drawable.ic_favorite_red_24dp: R.drawable.ic_favorite_border_white_24dp);
     	invalidateOptionsMenu();
     }
-    
-    private void deleteFromInternalStorage(){
+	
+	/**
+	 * Deletes the images from of the current Movie from the storage
+	 */
+	private void deleteFromInternalStorage(){
 	    ContextWrapper cw = new ContextWrapper(getApplicationContext());
 	    File directory = cw.getDir(mListMovie.getId().toString(), Context.MODE_PRIVATE);
 	    directory.delete();
 	    
     }
 	
+	/**
+	 * Saves a Bitmap with a given name to a directory specified by the movies id
+	 * @param bitmapImage the Bitmap to save
+	 * @param name the name to save the Bitmap as
+	 * @return the complete Path to the Image
+	 */
 	private String saveToInternalStorage(Bitmap bitmapImage, String name){
 		ContextWrapper cw = new ContextWrapper(getApplicationContext());
 		File directory = cw.getDir(mListMovie.getId().toString(), Context.MODE_PRIVATE);
@@ -370,7 +391,7 @@ public class DetailActivity extends BottomNavigationActivity
 	        data.close();
         }
 		
-		setFavoritUI();
+		setFavoriteUI();
 	}
 	
 	@Override

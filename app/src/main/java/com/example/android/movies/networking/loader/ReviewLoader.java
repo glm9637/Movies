@@ -16,6 +16,10 @@ import java.util.HashMap;
 /**
  * Erzeugt von M. Fengels am 03.04.2018.
  */
+
+/**
+ * Loads a list of reviews for a given movie
+ */
 public class ReviewLoader extends BaseNetworkLoader<ArrayList<Review>> {
 	private String mServiceEndpoint;
 	

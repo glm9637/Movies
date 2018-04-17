@@ -15,6 +15,10 @@ import java.util.ArrayList;
 /**
  * Erzeugt von M. Fengels am 03.04.2018.
  */
+
+/**
+ * Displays a List of Reviews
+ */
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 	
 	private LayoutInflater mInflater;
@@ -31,6 +35,11 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 		return new ReviewViewHolder(reviewView);
 	}
 	
+	/**
+	 * Binds data to a ViewHolder
+	 * @param holder the Viewholder to display the data in
+	 * @param position the Position of the Review inside the data List
+	 */
 	@Override
 	public void onBindViewHolder(@NonNull ReviewAdapter.ReviewViewHolder holder, int position) {
 		if(mData==null || mData.size()==0) {
@@ -52,6 +61,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 		notifyDataSetChanged();
 	}
 	
+	/**
+	 * @return Returns the length of the data list, or 1 to display a empty Message
+	 */
 	@Override
 	public int getItemCount() {
 		if (mData != null)
@@ -59,6 +71,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 		return 1;
 	}
 	
+	/**
+	 * The ViewHolder to display a review
+	 */
 	class ReviewViewHolder extends RecyclerView.ViewHolder {
 		
 		TextView mAuthorText;

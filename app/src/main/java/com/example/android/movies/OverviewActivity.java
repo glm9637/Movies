@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.android.movies.fragments.overview.FavoritFragment;
+import com.example.android.movies.fragments.overview.FavoriteFragment;
 import com.example.android.movies.fragments.overview.MoviePosterFragment;
 import com.example.android.movies.fragments.overview.PopularMoviesFragment;
 import com.example.android.movies.fragments.overview.TopRatedFragment;
@@ -70,7 +70,7 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 		MoviePosterFragment upcomingMovies = new UpcomingMoviesFragment();
 		upcomingMovies.setLoadTopImageListener(OverviewActivity.this);
 		addFragment(R.id.action_upcoming, upcomingMovies);
-		FavoritFragment favoritMovies = new FavoritFragment();
+		FavoriteFragment favoritMovies = new FavoriteFragment();
 		favoritMovies.setLoadTopImageListener(OverviewActivity.this);
 		addFragment(R.id.action_favorit, favoritMovies);
 		setStartFragment(R.id.action_top_rated);
@@ -107,6 +107,10 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 		
 	}
 	
+	/**
+	 * Displays a ErrorMessage to the user in the currently active Fragment
+	 * @param ErrorType the Type of the error to be displayed
+	 */
 	@Override
 	public void onError(int ErrorType) {
 		mAppBarLayout.setExpanded(false);

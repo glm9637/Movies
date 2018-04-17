@@ -15,6 +15,10 @@ import java.util.HashMap;
 /**
  * Erzeugt von M. Fengels am 03.04.2018.
  */
+
+/**
+ * Loads a list of trailers for a given movie
+ */
 public class TrailerLoader extends BaseNetworkLoader<ArrayList<Trailer>> {
 	private String mServiceEndpoint;
 	

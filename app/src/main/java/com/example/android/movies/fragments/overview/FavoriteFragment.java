@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Erzeugt von M. Fengels am 16.04.2018.
  */
-public class FavoritFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private RecyclerView mPosterGrid;
 	private MoviePosterAdapter mPosterAdapter;
@@ -134,19 +134,6 @@ public class FavoritFragment extends Fragment implements LoaderManager.LoaderCal
 	@Override
 	public void onLoaderReset(@NonNull Loader loader) {
 		loader.reset();
-	}
-	
-	public void refreshData() {
-		mContext.getSupportLoaderManager().restartLoader(Constants.LOADER_ID_FAVORIT_LIST, null, this);
-	}
-	
-	/**
-	 * interface for communication with the Activity, and displaying the first Movie on Top
-	 */
-	public interface LoadTopImage {
-		void onLoadTopImage(ListMovie topMovie, View.OnClickListener onMovieClicked);
-		
-		void onError(int ErrorType);
 	}
 	
 }

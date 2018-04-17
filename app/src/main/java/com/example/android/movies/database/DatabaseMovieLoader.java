@@ -11,6 +11,10 @@ import com.example.android.movies.model.Movie;
 /**
  * Erzeugt von M. Fengels am 13.04.2018.
  */
+
+/**
+ * Loads a Movie from the local database
+ */
 public class DatabaseMovieLoader extends AsyncTaskLoader<Movie> {
 	private int mMovieID;
 	

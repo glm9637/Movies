@@ -23,6 +23,9 @@ import java.util.ArrayList;
  * Erzeugt von M. Fengels am 26.02.2018.
  */
 
+/**
+ * Displays a List of Trailers with their corresponding preview Image
+ */
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerViewHolder> {
 
     private LayoutInflater mInflater;
@@ -40,8 +43,13 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         View posterView = mInflater.inflate(R.layout.trailer_recycler_item, parent, false);
         return new TrailerViewHolder(posterView);
     }
-
-    @Override
+	
+	/**
+	 * Binds the Trailer data to the Displayed View
+	 * @param holder the ViewHolder to display the data in
+	 * @param position the position of the Entry inside the data List
+	 */
+	@Override
     public void onBindViewHolder(@NonNull TrailerViewHolder holder, int position) {
         Trailer currentItem = mData.get(position);
         Picasso.with(mInflater.getContext()).load(NetworkHelper.getTrailerImageUrl(currentItem.getKey())).placeholder(R.drawable.progress_animation).into(holder.mPosterView);
@@ -63,17 +71,28 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
             return mData.size();
         return 0;
     }
-
-    class TrailerViewHolder extends ViewHolder {
+	
+	/**
+	 * The ViewHolder for a single Trailer Entry
+	 */
+	class TrailerViewHolder extends ViewHolder {
 
         ImageView mPosterView;
         TextView mTitleView;
-        
-        TrailerViewHolder(final View itemView) {
+		
+		/**
+		 * Binds the Views to Variables and adds a onClickListener to the View
+		 * @param itemView
+		 */
+		TrailerViewHolder(final View itemView) {
             super(itemView);
             mPosterView = itemView.findViewById(R.id.trailer_preview_image);
             mTitleView = itemView.findViewById(R.id.trailer_name);
 			itemView.setOnClickListener(new View.OnClickListener() {
+				/**
+				 * Opens either the Youtube app, or the browser with the Trailer, if the app is not installed.
+				 * @param v
+				 */
 				@Override
 				public void onClick(View v) {
 					Trailer trailer = mData.get(getAdapterPosition());

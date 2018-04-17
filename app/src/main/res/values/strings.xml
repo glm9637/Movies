@@ -2,7 +2,6 @@
     <string name="app_name">Movies</string>
 
     <string name="the_movie_db_url">https://api.themoviedb.org/3</string>
-    <string name="the_movie_db"></string>
 
 
     <string name="picture_transition_name">Thumbnail to Activity</string>

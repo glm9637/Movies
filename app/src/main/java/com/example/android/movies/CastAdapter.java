@@ -1,13 +1,10 @@
 package com.example.android.movies;
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +18,9 @@ import java.util.ArrayList;
  * Created by glm9637 on 18.03.2018 17:24.
  */
 
+/**
+ * Displays a List of the Cast for the Movie with a Picture, the real name and the Character's name
+ */
 public class CastAdapter extends RecyclerView.Adapter<CastAdapter.CastHolder> {
 
     private LayoutInflater mInflater;
@@ -41,7 +41,7 @@ public class CastAdapter extends RecyclerView.Adapter<CastAdapter.CastHolder> {
     public void onBindViewHolder(CastAdapter.CastHolder holder, int position) {
         Cast currentItem = mData.get(position);
         Picasso.with(mInflater.getContext()).load(NetworkHelper.getImageUrl(currentItem.getProfilePath(), NetworkHelper.ImageSize.small)).placeholder(R.drawable.progress_animation).into(holder.mActorImage);
-        holder.mCharactreText.setText(currentItem.getCharacter());
+        holder.mCharacterText.setText(currentItem.getCharacter());
         holder.mActorText.setText(currentItem.getName());
     }
 
@@ -60,13 +60,13 @@ public class CastAdapter extends RecyclerView.Adapter<CastAdapter.CastHolder> {
     class CastHolder extends RecyclerView.ViewHolder {
 
         ImageView mActorImage;
-        TextView mCharactreText;
+        TextView mCharacterText;
         TextView mActorText;
 
         CastHolder(final View itemView) {
             super(itemView);
             mActorImage = itemView.findViewById(R.id.cast_picture);
-            mCharactreText = itemView.findViewById(R.id.txt_role);
+            mCharacterText = itemView.findViewById(R.id.txt_role);
             mActorText = itemView.findViewById(R.id.txt_actor);
 
         }

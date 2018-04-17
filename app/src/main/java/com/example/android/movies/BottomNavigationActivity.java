@@ -108,6 +108,9 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 		
 	}
 	
+	/**
+	 * @return the currently selected Fragment
+	 */
 	protected Fragment getSelectedFragment() {
 		return mFragments.get(mBottomNavigation.getSelectedItemId());
 	}
@@ -128,6 +131,11 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 		
 	}
 	
+	/**
+	 * Displays a error Fragment to the user
+	 * @param errorType the type of the error
+	 * @param onRetryClickListener the listener of the retry-button
+	 */
 	protected void setErrorFragment(int errorType, View.OnClickListener onRetryClickListener) {
 		mIsErrorStateActive = true;
 		ErrorFragment errorFragment = new ErrorFragment();
@@ -139,12 +147,18 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 		mBottomNavigation.setEnabled(false);
 	}
 	
+	/**
+	 * Displays the default fragment again
+	 */
 	protected void endErrorState() {
 		mIsErrorStateActive = false;
 		pushFragment(getSelectedFragment());
 		mBottomNavigation.setEnabled(true);
 	}
 	
+	/**
+	 * Hides the BottomBar
+	 */
 	public void hideBottomBar() {
 		mBottomNavigation.setVisibility(View.INVISIBLE);
 	}

@@ -19,6 +19,9 @@ import com.squareup.picasso.Picasso;
  * Erzeugt von M. Fengels am 19.03.2018.
  */
 
+/**
+ * A Fragment to display a error Message
+ */
 public class ErrorFragment extends Fragment {
 	
 	private int mErrorType = Constants.ERROR_SOMETHING_WENT_WRONG;

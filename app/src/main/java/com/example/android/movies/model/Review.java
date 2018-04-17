@@ -6,6 +6,10 @@ import org.json.JSONObject;
 /**
  * Erzeugt von M. Fengels am 03.04.2018.
  */
+
+/**
+ * Basic model for a review
+ */
 public class Review {
 	
 	private String mAuthor;

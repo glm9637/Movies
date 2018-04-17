@@ -106,7 +106,6 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         TextView mOverviewText;
         Button mCloseDialogButton;
         AlertDialog mDialog;
-        ConstraintLayout mDialogView;
 
         /**
          * Saves a reference to the View and initialises the onClick and onLongClickListener

@@ -19,6 +19,9 @@ import java.util.ArrayList;
  * Erzeugt von M. Fengels am 26.02.2018.
  */
 
+/**
+ * Displays a list of images
+ */
 public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.MediaViewHolder> {
 
     private LayoutInflater mInflater;
