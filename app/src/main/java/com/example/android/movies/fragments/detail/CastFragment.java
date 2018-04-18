@@ -2,6 +2,7 @@ package com.example.android.movies.fragments.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ public class CastFragment extends Fragment implements LoaderManager.LoaderCallba
     private RecyclerView mCastList;
     private CastAdapter mCastAdapter;
     private Context mContext;
+	private Parcelable mLayoutManagerState;
+	private static Bundle mBundleRecyclerViewState;
 
 
     /**
@@ -74,5 +77,24 @@ public class CastFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoaderReset(@NonNull Loader loader) {
         loader.reset();
     }
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		mBundleRecyclerViewState = new Bundle();
+		mLayoutManagerState = mCastList.getLayoutManager().onSaveInstanceState();
+		mBundleRecyclerViewState.putParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW, mLayoutManagerState);
+		
+	}
+	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mBundleRecyclerViewState != null) {
+			Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			mCastList.getLayoutManager().onRestoreInstanceState(listState);
+		}
+	}
 
 }

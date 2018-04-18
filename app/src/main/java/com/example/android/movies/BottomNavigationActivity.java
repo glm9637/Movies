@@ -3,15 +3,19 @@ package com.example.android.movies;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.android.movies.behavior.BottomNavigationViewBehavior;
 import com.example.android.movies.fragments.overview.ErrorFragment;
 import com.example.android.movies.utils.Constants;
 
@@ -119,6 +123,8 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		outState.putInt("Fragment", mBottomNavigation.getSelectedItemId());
+		BottomNavigationViewBehavior behavior = (BottomNavigationViewBehavior) ((CoordinatorLayout.LayoutParams) mBottomNavigation.getLayoutParams()).getBehavior();
+		outState.putBoolean("BottomBarExpanded",behavior.isExpanded());
 	}
 	
 	@Override
@@ -127,9 +133,16 @@ public abstract class BottomNavigationActivity extends AppCompatActivity {
 		if (savedInstanceState != null) {
 			int fragment = savedInstanceState.getInt("Fragment");
 			mBottomNavigation.setSelectedItemId(fragment);
+			if(!savedInstanceState.getBoolean("BottomBarExpanded")){
+				mBottomNavigation.clearAnimation();
+				mBottomNavigation.animate().translationY(250).setDuration(0).start();
+				mBottomNavigation.requestLayout();
+			}
 		}
 		
 	}
+	
+	
 	
 	/**
 	 * Displays a error Fragment to the user

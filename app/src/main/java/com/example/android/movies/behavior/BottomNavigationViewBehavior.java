@@ -24,6 +24,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
 	}
 
     private int height;
+	private boolean expanded = true;
 
     @Override
     public boolean onLayoutChild(CoordinatorLayout parent, BottomNavigationView child, int layoutDirection) {
@@ -60,6 +61,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
     private void slideUp(BottomNavigationView child) {
         child.clearAnimation();
         child.animate().translationY(0).setDuration(200);
+        expanded = true;
     }
 
     /**
@@ -69,6 +71,11 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Bot
     private void slideDown(BottomNavigationView child) {
         child.clearAnimation();
         child.animate().translationY(height).setDuration(200);
+        expanded = false;
+    }
+    
+    public boolean isExpanded(){
+    	return expanded;
     }
 }
 

@@ -26,4 +26,6 @@ public class Constants {
 	public static final int ERROR_SOMETHING_WENT_WRONG = 1;
 	public static final int ERROR_NO_FAVORITES = 2;
 	public static final String INTENT_BUNDLE_MOVIE = "movie";
+	public static final String SAVE_INSTANCE_APP_BAR = "AppBarExpanded";
+	public static final String SAVE_INSTANCE_RECYCLERVIEW = "RecyclerViewPosition";
 }

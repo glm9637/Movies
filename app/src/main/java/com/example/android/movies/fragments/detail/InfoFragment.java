@@ -1,6 +1,5 @@
 package com.example.android.movies.fragments.detail;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,8 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,6 @@ import com.example.android.movies.DetailActivity;
 import com.example.android.movies.R;
 import com.example.android.movies.Views.CircularRatingBar;
 import com.example.android.movies.database.DatabaseMovieLoader;
-import com.example.android.movies.database.MovieContract;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.model.Movie;
 import com.example.android.movies.networking.loader.MovieLoader;
@@ -43,7 +41,7 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	private TextView mRevenue;
 	private CircularRatingBar mRating;
 	private TextView mVoteCount;
-	private View mRootView;
+	private NestedScrollView mRootView;
 	private int mMovieID;
 	private Movie mData;
 	private Context mContext;
@@ -57,7 +55,7 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mRootView = inflater.inflate(R.layout.fragment_detail_info, container, false);
+		mRootView = (NestedScrollView) inflater.inflate(R.layout.fragment_detail_info, container, false);
 		mContext = getContext();
 		mOverview = mRootView.findViewById(R.id.txt_overview);
 		mRuntime = mRootView.findViewById(R.id.txt_runtime);
@@ -130,7 +128,7 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	public Loader<Movie> onCreateLoader(int id, @Nullable Bundle args) {
 		switch (id) {
 			case Constants.LOADER_ID_FAVORIT_INTERNAL:
-				return new DatabaseMovieLoader(mContext,mMovieID);
+				return new DatabaseMovieLoader(mContext, mMovieID);
 			default:
 				return new MovieLoader(mContext, mMovieID);
 		}
@@ -151,10 +149,10 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 					initData();
 				}
 			}
-		}else if(loader.getId() == Constants.LOADER_ID_FAVORIT_INTERNAL){
+		} else if (loader.getId() == Constants.LOADER_ID_FAVORIT_INTERNAL) {
 			mData = data;
-			if(isAdded() && mData != null){
-				((DetailActivity) getActivity()).setImages(mData.getBackdropImagePath(),mData.getPosterImagePath());
+			if (isAdded() && mData != null) {
+				((DetailActivity) getActivity()).setImages(mData.getBackdropImagePath(), mData.getPosterImagePath());
 				initData();
 			}
 		}
@@ -168,4 +166,27 @@ public class InfoFragment extends Fragment implements LoaderManager.LoaderCallba
 	public ContentValues getMovieData() {
 		return mData.getContentValues();
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putIntArray(Constants.SAVE_INSTANCE_RECYCLERVIEW,
+				new int[]{mRootView.getScrollX(), mRootView.getScrollY()});
+	}
+	
+	@Override
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		
+		if (savedInstanceState != null) {
+			final int[] position = savedInstanceState.getIntArray(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			if (position != null)
+				mRootView.post(new Runnable() {
+					public void run() {
+						mRootView.scrollTo(position[0], position[1]);
+					}
+				});
+		}
+	}
+	
 }

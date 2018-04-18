@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 	private MoviePosterAdapter mPosterAdapter;
 	private FragmentActivity mContext;
 	private MoviePosterFragment.LoadTopImage mLoadTopImage;
+	private Parcelable mLayoutManagerState;
+	private static Bundle mBundleRecyclerViewState;
 	
 	/**
 	 * Adds a listener to load the first Image outside of the Recyclerview.
@@ -135,6 +138,25 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 	@Override
 	public void onLoaderReset(@NonNull Loader loader) {
 		loader.reset();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		mBundleRecyclerViewState = new Bundle();
+		mLayoutManagerState = mPosterGrid.getLayoutManager().onSaveInstanceState();
+		mBundleRecyclerViewState.putParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW, mLayoutManagerState);
+		
+	}
+	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mBundleRecyclerViewState != null) {
+			Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			mPosterGrid.getLayoutManager().onRestoreInstanceState(listState);
+		}
 	}
 	
 }

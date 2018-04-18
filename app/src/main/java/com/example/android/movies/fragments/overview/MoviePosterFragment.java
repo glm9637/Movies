@@ -5,6 +5,7 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 
 import com.example.android.movies.DetailActivity;
 import com.example.android.movies.MoviePosterAdapter;
+import com.example.android.movies.OverviewActivity;
 import com.example.android.movies.R;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.loader.MovieListLoader;
@@ -50,7 +52,9 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
     private MoviePosterAdapter mPosterAdapter;
     private FragmentActivity mContext;
     private LoadTopImage mLoadTopImage;
-
+    private Parcelable mLayoutManagerState;
+	private static Bundle mBundleRecyclerViewState;
+    
     /**
      *
      * @return The Endpoint from which the loader should fetch its data
@@ -77,8 +81,8 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
         View rootView = inflater.inflate(R.layout.fragment_recycler, container, false);
         mContext = getActivity();
         mPosterGrid = rootView.findViewById(R.id.recycler_overview);
-        GridLayoutManager gridManager = new GridLayoutManager(getContext(), 2);
-        mPosterGrid.setLayoutManager(gridManager);
+	    GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        mPosterGrid.setLayoutManager(layoutManager );
         mPosterAdapter = new MoviePosterAdapter(getContext(), new MoviePosterAdapter.MovieSelectedListener() {
             @Override
             public void onMovieSelected(ImageView posterView, Bundle info) {
@@ -152,5 +156,23 @@ public abstract class MoviePosterFragment extends Fragment implements LoaderMana
 	public void refreshData() {
 		mContext.getSupportLoaderManager().restartLoader(getLoaderID(), null, this);
 	}
-
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		mBundleRecyclerViewState = new Bundle();
+		mLayoutManagerState = mPosterGrid.getLayoutManager().onSaveInstanceState();
+		mBundleRecyclerViewState.putParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW, mLayoutManagerState);
+		
+	}
+	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mBundleRecyclerViewState != null) {
+			Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			mPosterGrid.getLayoutManager().onRestoreInstanceState(listState);
+		}
+	}
 }

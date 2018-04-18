@@ -2,6 +2,7 @@ package com.example.android.movies.fragments.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,7 +34,6 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
 	
 	/**
 	 * Inflates the Fragments rootView, create the Adapter for the Recyclerview, and starts a Loader, to load the cast.
-	 * @return
 	 */
 	@Nullable
 	@Override
@@ -69,6 +69,22 @@ public class ReviewFragment extends Fragment implements LoaderManager.LoaderCall
 	@Override
 	public void onLoaderReset(@NonNull Loader loader) {
 		loader.reset();
+	}
+	
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW,mReviewList.getLayoutManager().onSaveInstanceState());
+	}
+	
+	@Override
+	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+		super.onViewStateRestored(savedInstanceState);
+		
+		if(savedInstanceState!=null){
+			Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			mReviewList.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+		}
 	}
 	
 }

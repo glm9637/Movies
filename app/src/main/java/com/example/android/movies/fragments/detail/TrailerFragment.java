@@ -2,6 +2,7 @@ package com.example.android.movies.fragments.detail;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +31,8 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
 	private RecyclerView mTrailerList;
 	private TrailerAdapter mTrailerAdapter;
 	private Context mContext;
+	private Parcelable mLayoutManagerState;
+	private static Bundle mBundleRecyclerViewState;
 	
 	/**
 	 * Inflates the Fragments rootView, create the Adapter for the Recyclerview, and starts a Loader, to load the cast.
@@ -71,4 +74,22 @@ public class TrailerFragment extends Fragment implements LoaderManager.LoaderCal
 		loader.reset();
 	}
 	
+	@Override
+	public void onPause() {
+		super.onPause();
+		mBundleRecyclerViewState = new Bundle();
+		mLayoutManagerState = mTrailerList.getLayoutManager().onSaveInstanceState();
+		mBundleRecyclerViewState.putParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW, mLayoutManagerState);
+		
+	}
+	
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mBundleRecyclerViewState != null) {
+			Parcelable listState = mBundleRecyclerViewState.getParcelable(Constants.SAVE_INSTANCE_RECYCLERVIEW);
+			mTrailerList.getLayoutManager().onRestoreInstanceState(listState);
+		}
+	}
 }

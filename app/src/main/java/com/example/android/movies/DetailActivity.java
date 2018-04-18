@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -397,5 +398,22 @@ public class DetailActivity extends BottomNavigationActivity
 	@Override
 	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 	
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		final CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams()).getBehavior();
+		
+		outState.putBoolean(Constants.SAVE_INSTANCE_APP_BAR, (behavior instanceof AppBarLayout.Behavior) && (((AppBarLayout.Behavior) behavior).getTopAndBottomOffset() == 0));
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		if(savedInstanceState!=null){
+			boolean isAppBarExpanded = savedInstanceState.getBoolean(Constants.SAVE_INSTANCE_APP_BAR);
+			mAppBarLayout.setExpanded(isAppBarExpanded,false);
+		}
 	}
 }

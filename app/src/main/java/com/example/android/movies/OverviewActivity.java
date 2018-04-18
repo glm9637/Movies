@@ -2,6 +2,7 @@ package com.example.android.movies;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.example.android.movies.fragments.overview.TopRatedFragment;
 import com.example.android.movies.fragments.overview.UpcomingMoviesFragment;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.networking.NetworkHelper;
+import com.example.android.movies.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -121,5 +123,22 @@ public class OverviewActivity extends BottomNavigationActivity implements MovieP
 			}
 		});
 		
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		final CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams()).getBehavior();
+		
+		outState.putBoolean(Constants.SAVE_INSTANCE_APP_BAR, (behavior instanceof AppBarLayout.Behavior) && (((AppBarLayout.Behavior) behavior).getTopAndBottomOffset() == 0));
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		if(savedInstanceState!=null){
+			boolean isAppBarExpanded = savedInstanceState.getBoolean(Constants.SAVE_INSTANCE_APP_BAR);
+			mAppBarLayout.setExpanded(isAppBarExpanded,false);
+		}
 	}
 }
