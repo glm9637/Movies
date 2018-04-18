@@ -1,4 +1,4 @@
-package com.example.android.movies.Views;
+package com.example.android.movies.views;
 
 import android.content.Context;
 import android.graphics.Canvas;

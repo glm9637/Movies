@@ -11,7 +11,7 @@
         android:padding="8dp">
 
 
-        <com.example.android.movies.Views.CircularRatingBar
+        <com.example.android.movies.views.CircularRatingBar
             android:id="@+id/user_rating_bar"
             android:layout_width="64dp"
             android:layout_height="64dp"

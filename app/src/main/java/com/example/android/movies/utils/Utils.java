@@ -14,9 +14,11 @@ import java.util.Locale;
  * Created by glm9637 on 11.03.2018 14:23.
  */
 
-public class Utils {
+public final class Utils {
 
-
+	private Utils(){
+	
+	}
     /**
      * parses a String with the patter yyyy-MM-dd to a date
      * @param dateValue the String to be parsed

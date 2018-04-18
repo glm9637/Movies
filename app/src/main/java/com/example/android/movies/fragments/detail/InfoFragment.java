@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.example.android.movies.BottomNavigationActivity;
 import com.example.android.movies.DetailActivity;
 import com.example.android.movies.R;
-import com.example.android.movies.Views.CircularRatingBar;
+import com.example.android.movies.views.CircularRatingBar;
 import com.example.android.movies.database.DatabaseMovieLoader;
 import com.example.android.movies.model.ListMovie;
 import com.example.android.movies.model.Movie;
